@@ -1,0 +1,13 @@
+temp/
+**/__pycache__/
+**/.venv/
+*.db
+.env
+.pytest_cache/
+.ruff_cache/
+client/build/
+client/.dart_tool/
+
+client/android/key.properties
+client/android/*.jks
+server/*.db

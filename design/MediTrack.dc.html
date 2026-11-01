@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;background:#EAF1FB;font-family:'Figtree',system-ui,sans-serif;color:#101B2D;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:disabled{cursor:not-allowed;opacity:.55}
+input,select,textarea{font:inherit;color:#101B2D}
+a{color:#1877F2}a:hover{color:#0F5FCC}
+:focus-visible{outline:3px solid #1877F2;outline-offset:2px}
+@keyframes mtIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes mtSheet{from{transform:translateY(100%)}to{transform:none}}
+@keyframes mtFade{from{opacity:0}to{opacity:1}}
+@keyframes mtPop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@keyframes mtPulse{0%{transform:scale(.85);opacity:.55}100%{transform:scale(1.9);opacity:0}}
+@keyframes mtFloat{0%,100%{transform:rotate(6deg) translateY(0)}50%{transform:rotate(6deg) translateY(-5px)}}
+@keyframes mtScan{0%{top:10%}50%{top:86%}100%{top:10%}}
+@keyframes mtSpin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+[data-rm="1"] *{animation:none!important;transition:none!important}
+</style>
+</helmet>
+<div data-rm="{{ rm }}" style="min-height:100dvh;display:flex;justify-content:center;background:radial-gradient(900px 600px at 15% 0%,#DDEBFE 0%,rgba(221,235,254,0) 70%),radial-gradient(700px 500px at 100% 100%,#E2EEFF 0%,rgba(226,238,255,0) 70%),#EEF3FA">
+<div style="position:relative;width:100%;max-width:440px;height:100dvh;overflow:hidden;background:linear-gradient(180deg,#FFFFFF 0%,#F6F9FF 100%);box-shadow:0 0 0 1px rgba(24,119,242,.06),0 30px 80px rgba(30,80,160,.12)">
+<div ref="{{ scrollRef }}" style="position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch">
+<main style="zoom:{{ zoom }};padding:calc(env(safe-area-inset-top) + 16px) 20px calc(env(safe-area-inset-bottom) + 124px)">
+
+<sc-if value="{{ is.home }}" hint-placeholder-val="{{ true }}">
+<div style="animation:mtIn .32s ease both;display:flex;flex-direction:column;gap:18px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <div aria-label="MediTrack" style="font-size:26px;font-weight:800;letter-spacing:.01em;color:#101B2D">MEDI<span style="color:#1877F2">TRACK</span></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button aria-label="{{ bellLabel }}" onClick="{{ goNotes }}" style="position:relative;width:48px;height:48px;border-radius:16px;border:1px solid #E6EEF9;background:#fff;box-shadow:0 6px 18px rgba(28,84,160,.10);display:grid;place-items:center;color:#101B2D">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg>
+        <sc-if value="{{ hasUnread }}"><span style="position:absolute;top:9px;right:10px;width:11px;height:11px;border-radius:50%;background:#EF5A4A;border:2px solid #fff"></span></sc-if>
+      </button>
+      <button aria-label="Open profile" onClick="{{ goProfile }}" style="width:48px;height:48px;border-radius:50%;border:2px solid #fff;background:linear-gradient(135deg,#BCD9FF,#4F97F6);color:#fff;font-weight:700;font-size:16px;box-shadow:0 6px 18px rgba(28,84,160,.2)">ML</button>
+    </div>
+  </div>
+
+  <div style="position:relative;min-height:178px;display:flex;align-items:center">
+    <div style="position:relative;z-index:2;max-width:60%;display:flex;flex-direction:column;gap:7px">
+      <div style="font-size:17px;color:#647A99;font-weight:500">{{ greeting }}</div>
+      <h1 style="margin:0;font-size:32px;line-height:1.08;font-weight:800;letter-spacing:-.02em;text-wrap:balance">Stay on track today.</h1>
+      <div style="font-size:16px;color:#647A99">Your health, our priority.</div>
+      <sc-if value="{{ showDemoChip }}"><button onClick="{{ openDemo }}" style="align-self:flex-start;margin-top:6px;display:flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;border-radius:999px;border:1px dashed #BCD3F2;background:rgba(255,255,255,.7);font-size:13px;font-weight:600;color:#45608A"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Demo clock · {{ clockText }}</button></sc-if>
+    </div>
+    <sc-if value="{{ showIllo }}" hint-placeholder-val="{{ true }}">
+    <div aria-hidden="true" style="position:absolute;right:-16px;top:-2px;width:184px;height:180px">
+      <div style="position:absolute;right:10px;top:6px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#F1F7FF 0%,#D3E5FF 58%,#BCD8FD 100%)"></div>
+      <div style="position:absolute;left:22px;top:72px;width:134px;height:84px;border-radius:26px;background:linear-gradient(160deg,#FFFFFF,#E2ECFA);box-shadow:0 20px 30px rgba(24,100,220,.22),inset 0 2px 0 #fff;transform:rotate(-14deg) skewX(8deg)"><div style="position:absolute;inset:10px;border-radius:18px;background:linear-gradient(160deg,#E6F0FD,#F8FBFF);box-shadow:inset 0 4px 10px rgba(40,100,190,.16)"></div></div>
+      <div style="position:absolute;left:44px;top:84px;width:66px;height:26px;border-radius:13px;transform:rotate(-38deg);display:flex;overflow:hidden;box-shadow:0 8px 14px rgba(24,100,220,.3)"><div style="flex:1;background:linear-gradient(180deg,#62AAFF,#1668E3)"></div><div style="flex:1;background:linear-gradient(180deg,#FFFFFF,#D8E4F5)"></div></div>
+      <div style="position:absolute;left:82px;top:118px;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFFFFF,#D5DFEC);box-shadow:0 6px 10px rgba(24,70,140,.2)"></div>
+      <div style="position:absolute;left:110px;top:104px;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFFFFF,#D5DFEC);box-shadow:0 6px 10px rgba(24,70,140,.2)"></div>
+      <div style="position:absolute;left:6px;top:128px;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFFFFF,#CFE0F7);box-shadow:0 6px 10px rgba(24,70,140,.14)"></div>
+      <div style="position:absolute;right:2px;top:20px;padding:8px 12px 8px 8px;border-radius:16px;background:rgba(255,255,255,.9);border:1px solid #fff;box-shadow:0 10px 24px rgba(28,84,160,.18);display:flex;align-items:center;gap:8px;animation:mtFloat 5s ease-in-out infinite;transform:rotate(6deg)">
+        <span style="width:28px;height:28px;border-radius:50%;background:{{ heroChip.bg }};display:grid;place-items:center;color:#fff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="{{ heroChip.path }}"></path></svg></span>
+        <span style="display:flex;flex-direction:column;line-height:1.15;font-size:13px;font-weight:600;color:#101B2D"><span>{{ heroChip.a }}</span><span style="color:#647A99;font-weight:500">{{ heroChip.b }}</span></span>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+
+  <div style="border-radius:24px;background:#fff;border:1px solid #E4ECF8;box-shadow:0 14px 34px rgba(28,84,160,.10);overflow:hidden">
+    <button onClick="{{ goMeds }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 18px;border:0;background:linear-gradient(180deg,#EDF5FF,#F7FAFF);border-bottom:1px solid #E8EFFA;text-align:left;min-height:56px">
+      <span style="font-size:18px;font-weight:700">Today's Medication</span>
+      <span style="display:flex;align-items:center;gap:4px;color:#45608A;font-size:15px;font-weight:500">{{ takenText }}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
+    </button>
+    <div style="height:4px;background:#EEF3FA"><div style="height:4px;width:{{ progressW }};background:linear-gradient(90deg,#5AA6FF,#1877F2);transition:width .5s ease"></div></div>
+    <button onClick="{{ featured.open }}" aria-label="{{ featured.aria }}" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px 18px;border:0;background:#fff;text-align:left">
+      <span style="width:58px;height:58px;flex:none;border-radius:18px;background:{{ featured.tile }};display:grid;place-items:center;box-shadow:inset 0 1px 0 #fff,0 4px 10px rgba(28,84,160,.08)">
+        <sc-if value="{{ featured.cap }}"><span style="width:40px;height:18px;border-radius:9px;display:flex;overflow:hidden;transform:rotate(-40deg);box-shadow:0 4px 8px rgba(24,100,220,.25)"><span style="flex:1;background:{{ featured.pa }}"></span><span style="flex:1;background:{{ featured.pb }}"></span></span></sc-if>
+        <sc-if value="{{ featured.round }}"><span style="position:relative;width:30px;height:30px;border-radius:50%;background:{{ featured.pa }};box-shadow:0 4px 8px rgba(16,27,45,.18)"><span style="position:absolute;left:5px;right:5px;top:14px;height:2px;border-radius:1px;background:{{ featured.line }};transform:rotate(-35deg)"></span></span></sc-if>
+      </span>
+      <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+        <span style="font-size:19px;font-weight:700">{{ featured.title }}</span>
+        <span style="font-size:15px;color:#647A99">{{ featured.sub }}</span>
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:999px;background:{{ featured.bg }};color:{{ featured.fg }};font-size:15px;font-weight:600;white-space:nowrap">
+        <sc-if value="{{ featured.isTaken }}"><span style="width:20px;height:20px;border-radius:50%;background:#1877F2;color:#fff;display:grid;place-items:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg></span></sc-if>
+        <sc-if value="{{ featured.isAlert }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.5 20h19z"></path><path d="M12 10v4.5M12 17.5v.01"></path></svg></sc-if>
+        <sc-if value="{{ featured.isClock }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></sc-if>
+        {{ featured.badge }}
+      </span>
+    </button>
+  </div>
+
+  <button onClick="{{ openVoice }}" style="width:100%;display:flex;align-items:center;gap:16px;padding:18px 18px 18px 20px;border:0;border-radius:24px;background:linear-gradient(135deg,#3D95FB 0%,#1877F2 55%,#1463D8 100%);color:#fff;text-align:left;box-shadow:0 16px 32px rgba(24,119,242,.34),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .15s ease" style-active="transform:scale(.985)">
+    <span style="width:54px;height:54px;border-radius:17px;background:rgba(255,255,255,.17);display:grid;place-items:center;flex:none"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"></path></svg></span>
+    <span style="flex:1;display:flex;flex-direction:column;gap:3px"><span style="font-size:21px;font-weight:700">Remind Me Now</span><span style="font-size:15px;opacity:.94">Use voice to log or set a reminder</span></span>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg>
+  </button>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px">
+    <button onClick="{{ goAnalytics }}" aria-label="{{ ring.aria }}" style="display:flex;align-items:center;gap:12px;padding:16px 14px;border-radius:22px;border:1px solid #E4ECF8;background:#fff;box-shadow:0 10px 28px rgba(28,84,160,.08);text-align:left;min-width:0">
+      <span style="position:relative;width:68px;height:68px;flex:none">
+        <svg width="68" height="68" viewBox="0 0 68 68"><defs><linearGradient id="mtRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#62AAFF"></stop><stop offset="1" stop-color="#1668E3"></stop></linearGradient></defs><circle cx="34" cy="34" r="28" fill="none" stroke="#E3EEFC" stroke-width="8"></circle><circle cx="34" cy="34" r="28" fill="none" stroke="url(#mtRing)" stroke-width="8" stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="{{ ring.offset }}" transform="rotate(-90 34 34)" style="transition:stroke-dashoffset .9s cubic-bezier(.2,.7,.2,1)"></circle></svg>
+        <span style="position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:800">{{ ring.pct }}</span>
+      </span>
+      <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+        <span style="font-size:15px;font-weight:700;line-height:1.2">Adherence this week</span>
+        <span style="font-size:14px;color:#647A99">{{ ring.count }}</span>
+        <span style="font-size:14px;font-weight:700;color:{{ ring.trendColor }}">{{ ring.trend }}</span>
+      </span>
+    </button>
+    <button onClick="{{ openSafety }}" aria-label="{{ safety.aria }}" style="display:flex;flex-direction:column;gap:8px;padding:16px 14px;border-radius:22px;border:1px solid #E4ECF8;background:#fff;box-shadow:0 10px 28px rgba(28,84,160,.08);text-align:left;min-width:0">
+      <span style="display:flex;align-items:center;gap:10px">
+        <span style="width:42px;height:42px;border-radius:14px;background:{{ safety.tile }};display:grid;place-items:center;color:{{ safety.color }};flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.5 3.2 8.2 7.5 9.5 4.3-1.3 7.5-5 7.5-9.5V6z"></path><path d="{{ safety.glyph }}"></path></svg></span>
+        <span style="font-size:15px;font-weight:700;flex:1">Safety Status</span>
+      </span>
+      <span style="font-size:21px;font-weight:800;color:{{ safety.color }};line-height:1.1">{{ safety.title }}</span>
+      <span style="font-size:14px;color:#647A99;line-height:1.35">{{ safety.text }}</span>
+    </button>
+  </div>
+
+  <div style="border-radius:24px;background:#fff;border:1px solid #E4ECF8;box-shadow:0 10px 28px rgba(28,84,160,.08);overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 10px 10px 18px">
+      <h2 style="margin:0;font-size:18px;font-weight:700">Upcoming Medications</h2>
+      <button onClick="{{ goMeds }}" style="display:flex;align-items:center;gap:2px;min-height:44px;padding:0 8px;border:0;background:transparent;color:#1877F2;font-size:15px;font-weight:600">View All<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></button>
+    </div>
+    <sc-for list="{{ upcoming }}" as="u" hint-placeholder-count="2">
+      <button onClick="{{ u.open }}" aria-label="{{ u.aria }}" style="width:100%;display:flex;align-items:center;gap:13px;padding:13px 12px 13px 18px;border:0;border-top:1px solid #EEF3FA;background:#fff;text-align:left;transition:background .2s" style-hover="background:#F8FBFF">
+        <span style="width:52px;height:52px;flex:none;border-radius:16px;background:{{ u.tile }};display:grid;place-items:center;box-shadow:inset 0 1px 0 #fff,0 3px 8px rgba(28,84,160,.07)">
+          <sc-if value="{{ u.cap }}"><span style="width:36px;height:16px;border-radius:8px;display:flex;overflow:hidden;transform:rotate(-40deg)"><span style="flex:1;background:{{ u.pa }}"></span><span style="flex:1;background:{{ u.pb }}"></span></span></sc-if>
+          <sc-if value="{{ u.round }}"><span style="position:relative;width:28px;height:28px;border-radius:50%;background:{{ u.pa }};box-shadow:0 4px 8px rgba(16,27,45,.16)"><span style="position:absolute;left:5px;right:5px;top:13px;height:2px;border-radius:1px;background:{{ u.line }};transform:rotate(-35deg)"></span></span></sc-if>
+        </span>
+        <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-size:17px;font-weight:700">{{ u.title }}</span><span style="font-size:15px;color:#647A99">{{ u.sub }}</span></span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:{{ u.bg }};color:{{ u.fg }};font-size:14px;font-weight:600;white-space:nowrap">
+          <sc-if value="{{ u.isAlert }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.5 20h19z"></path><path d="M12 10v4.5M12 17.5v.01"></path></svg></sc-if>
+          <sc-if value="{{ u.isClock }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></sc-if>
+          {{ u.badge }}</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8FA2BD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg>
+      </button>
+    </sc-for>
+    <sc-if value="{{ noUpcoming }}"><div style="padding:18px;border-top:1px solid #EEF3FA;font-size:15px;color:#647A99">Every dose scheduled for today has been confirmed.</div></sc-if>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.meds }}" hint-placeholder-val="{{ false }}">
+<div style="animation:mtIn .3s ease both;display:flex;flex-direction:column;gap:16px">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+    <div><h1 style="margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em">Medications</h1><div style="font-size:15px;color:#647A99;margin-top:2px">{{ dateText }} · {{ takenText }}</div></div>
+    <button onClick="{{ openAdd }}" style="display:flex;align-items:center;gap:6px;min-height:46px;padding:0 16px;border:0;border-radius:15px;background:#1877F2;color:#fff;font-weight:700;font-size:15px;box-shadow:0 8px 18px rgba(24,119,242,.3)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Add</button>
+  </div>
+  <div role="tablist" aria-label="Filter doses" style="display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px">
+    <sc-for list="{{ medFilters }}" as="c" hint-placeholder-count="4"><button role="tab" aria-selected="{{ c.active }}" onClick="{{ c.onClick }}" style="flex:none;min-height:44px;padding:0 15px;border-radius:999px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};font-size:15px;font-weight:600;transition:all .2s">{{ c.label }}</button></sc-for>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ medList }}" as="u" hint-placeholder-count="3">
+      <button onClick="{{ u.open }}" aria-label="{{ u.aria }}" style="width:100%;display:flex;align-items:center;gap:13px;padding:14px 12px 14px 14px;border-radius:20px;border:1px solid #E4ECF8;background:#fff;box-shadow:0 8px 22px rgba(28,84,160,.07);text-align:left;transition:transform .15s,box-shadow .2s" style-hover="box-shadow:0 12px 28px rgba(28,84,160,.12)">
+        <span style="width:52px;height:52px;flex:none;border-radius:16px;background:{{ u.tile }};display:grid;place-items:center">
+          <sc-if value="{{ u.cap }}"><span style="width:36px;height:16px;border-radius:8px;display:flex;overflow:hidden;transform:rotate(-40deg)"><span style="flex:1;background:{{ u.pa }}"></span><span style="flex:1;background:{{ u.pb }}"></span></span></sc-if>
+          <sc-if value="{{ u.round }}"><span style="position:relative;width:28px;height:28px;border-radius:50%;background:{{ u.pa }};box-shadow:0 4px 8px rgba(16,27,45,.16)"><span style="position:absolute;left:5px;right:5px;top:13px;height:2px;border-radius:1px;background:{{ u.line }};transform:rotate(-35deg)"></span></span></sc-if>
+        </span>
+        <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:17px;font-weight:700">{{ u.title }}</span><span style="font-size:15px;color:#647A99">{{ u.sub }}</span><span style="font-size:14px;color:#45608A;font-weight:600">{{ u.time }} · {{ u.rec }}</span></span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:{{ u.bg }};color:{{ u.fg }};font-size:14px;font-weight:600;white-space:nowrap">
+          <sc-if value="{{ u.isTaken }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg></sc-if>
+          <sc-if value="{{ u.isAlert }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.5 20h19z"></path><path d="M12 10v4.5M12 17.5v.01"></path></svg></sc-if>
+          <sc-if value="{{ u.isClock }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></sc-if>
+          {{ u.badgeShort }}</span>
+      </button>
+    </sc-for>
+    <sc-if value="{{ medEmpty }}"><div style="padding:32px 20px;border-radius:20px;border:1px dashed #CFDDF0;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center"><span style="font-size:17px;font-weight:700">{{ medEmptyTitle }}</span><span style="font-size:15px;color:#647A99">{{ medEmptyText }}</span></div></sc-if>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.detail }}" hint-placeholder-val="{{ false }}">
+<div style="animation:mtIn .3s ease both;display:flex;flex-direction:column;gap:16px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button aria-label="Back" onClick="{{ back }}" style="width:48px;height:48px;border-radius:16px;border:1px solid #E6EEF9;background:#fff;box-shadow:0 4px 12px rgba(28,84,160,.08);display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"></path></svg></button>
+    <h1 style="margin:0;flex:1;font-size:22px;font-weight:700">Medication details</h1>
+    <sc-if value="{{ cur.exists }}"><button onClick="{{ cur.edit }}" style="min-height:48px;padding:0 14px;border-radius:16px;border:1px solid #E6EEF9;background:#fff;color:#1877F2;font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"></path></svg>Edit</button></sc-if>
+  </div>
+  <sc-if value="{{ cur.missing }}"><div style="padding:32px 20px;border-radius:20px;border:1px dashed #CFDDF0;text-align:center;font-size:16px;color:#647A99">This medication was removed.</div></sc-if>
+  <sc-if value="{{ cur.exists }}">
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div style="position:relative;padding:22px 20px;border-radius:26px;background:linear-gradient(160deg,#FFFFFF 0%,#F1F7FF 100%);border:1px solid #E1EBF8;box-shadow:0 16px 36px rgba(28,84,160,.12);display:flex;flex-direction:column;gap:16px;overflow:hidden">
+      <div style="position:absolute;right:-40px;top:-50px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,#DCEBFF 0%,rgba(220,235,255,0) 70%)"></div>
+      <div style="position:relative;display:flex;align-items:center;gap:16px">
+        <span style="width:76px;height:76px;flex:none;border-radius:24px;background:{{ cur.tile }};display:grid;place-items:center;box-shadow:inset 0 1px 0 #fff,0 8px 18px rgba(28,84,160,.12)">
+          <sc-if value="{{ cur.cap }}"><span style="width:52px;height:22px;border-radius:11px;display:flex;overflow:hidden;transform:rotate(-40deg);box-shadow:0 6px 10px rgba(24,100,220,.25)"><span style="flex:1;background:{{ cur.pa }}"></span><span style="flex:1;background:{{ cur.pb }}"></span></span></sc-if>
+          <sc-if value="{{ cur.round }}"><span style="position:relative;width:40px;height:40px;border-radius:50%;background:{{ cur.pa }};box-shadow:0 6px 10px rgba(16,27,45,.18)"><span style="position:absolute;left:6px;right:6px;top:19px;height:2px;border-radius:1px;background:{{ cur.line }};transform:rotate(-35deg)"></span></span></sc-if>
+        </span>
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><div style="font-size:25px;font-weight:800;letter-spacing:-.01em">{{ cur.title }}</div><div style="font-size:16px;color:#647A99">For {{ cur.purpose }}</div></div>
+      </div>
+      <div style="position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:999px;background:{{ cur.bg }};color:{{ cur.fg }};font-size:15px;font-weight:700">
+          <sc-if value="{{ cur.isTaken }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg></sc-if>
+          <sc-if value="{{ cur.isAlert }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.5 20h19z"></path><path d="M12 10v4.5M12 17.5v.01"></path></svg></sc-if>
+          <sc-if value="{{ cur.isClock }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></sc-if>
+          {{ cur.statusLong }}</span>
+        <sc-if value="{{ cur.isTaken }}"><span style="font-size:14px;color:#45608A">{{ cur.takenText }}</span></sc-if>
+      </div>
+    </div>
+
+    <sc-if value="{{ cur.hasOpenAlert }}"><button onClick="{{ cur.openAlert }}" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:18px;border:1px solid #F6CFC8;background:#FFF5F3;text-align:left;color:#9E2F24"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.5 20h19z"></path><path d="M12 10v4.5M12 17.5v.01"></path></svg><span style="flex:1;font-size:15px;font-weight:600">Caregiver has been alerted about this dose. View alert</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></button></sc-if>
+
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
+      <sc-for list="{{ cur.facts }}" as="f" hint-placeholder-count="4"><div style="padding:14px;border-radius:18px;background:#fff;border:1px solid #E4ECF8;display:flex;flex-direction:column;gap:4px"><span style="font-size:14px;color:#647A99">{{ f.k }}</span><span style="font-size:17px;font-weight:700">{{ f.v }}</span></div></sc-for>
+    </div>
+
+    <sc-if value="{{ cur.canAct }}">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button onClick="{{ cur.confirmTake }}" style="min-height:58px;border:0;border-radius:18px;background:linear-gradient(135deg,#3D95FB,#1877F2);color:#fff;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 12px 26px rgba(24,119,242,.3)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>I've taken it</button>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
+        <button onClick="{{ cur.verify }}" style="min-height:54px;border-radius:16px;border:1px solid #D6E5F8;background:#fff;color:#1462D6;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>Verify</button>
+        <button onClick="{{ cur.defer }}" disabled="{{ cur.noDefer }}" style="min-height:54px;border-radius:16px;border:1px solid #D6E5F8;background:#fff;color:#1462D6;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Remind later</button>
+      </div>
+      <sc-if value="{{ cur.noDefer }}"><div style="font-size:14px;color:#647A99">Reminders can't be moved while a caregiver alert is open.</div></sc-if>
+    </div>
+    </sc-if>
+    <sc-if value="{{ cur.isTaken }}"><button onClick="{{ cur.undo }}" style="align-self:flex-start;min-height:44px;padding:0 4px;border:0;background:transparent;color:#45608A;font-size:15px;font-weight:600;text-decoration:underline">Undo confirmation</button></sc-if>
+
+    <div style="border-radius:22px;background:#fff;border:1px solid #E4ECF8;overflow:hidden">
+      <h2 style="margin:0;padding:16px 18px 8px;font-size:17px;font-weight:700">History</h2>
+      <sc-for list="{{ cur.history }}" as="h" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid #EEF3FA"><span style="width:10px;height:10px;border-radius:50%;background:{{ h.dot }};flex:none"></span><span style="flex:1;font-size:15px">{{ h.text }}</span><span style="font-size:14px;color:#647A99;white-space:nowrap">{{ h.when }}</span></div></sc-for>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.verify }}" hint-placeholder-val="{{ false }}">
+<div style="animation:mtIn .3s ease both;display:flex;flex-direction:column;gap:16px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button aria-label="Back" onClick="{{ back }}" style="width:48px;height:48px;border-radius:16px;border:1px solid #E6EEF9;background:#fff;box-shadow:0 4px 12px rgba(28,84,160,.08);display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"></path></svg></button>
+    <h1 style="margin:0;flex:1;font-size:22px;font-weight:700">Verify dose</h1>
+  </div>
+  <div role="note" style="display:flex;gap:10px;padding:12px 14px;border-radius:16px;background:#EEF5FF;border:1px solid #D6E6FB;font-size:14px;line-height:1.4;color:#24406A"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8v.01"></path></svg><span><strong>Simulated verification.</strong> This prototype doesn't capture or analyse images. Pick a demo outcome to see how each result is handled.</span></div>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:#fff;border:1px solid #E4ECF8">
+    <span style="width:46px;height:46px;flex:none;border-radius:14px;background:{{ cur.tile }};display:grid;place-items:center"><sc-if value="{{ cur.cap }}"><span style="width:32px;height:14px;border-radius:7px;display:flex;overflow:hidden;transform:rotate(-40deg)"><span style="flex:1;background:{{ cur.pa }}"></span><span style="flex:1;background:{{ cur.pb }}"></span></span></sc-if><sc-if value="{{ cur.round }}"><span style="width:24px;height:24px;border-radius:50%;background:{{ cur.pa }};box-shadow:0 3px 6px rgba(16,27,45,.16)"></span></sc-if></span>
+    <span style="flex:1;display:flex;flex-direction:column"><span style="font-size:17px;font-weight:700">{{ cur.title }}</span><span style="font-size:14px;color:#647A99">{{ cur.sub }} · {{ cur.time }}</span></span>
+  </div>
+  <div style="position:relative;aspect-ratio:4/3;border-radius:24px;overflow:hidden;background:repeating-linear-gradient(135deg,#F1F6FD 0 12px,#E8F0FB 12px 24px);border:1px solid #DCE7F6;display:grid;place-items:center">
+    <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;color:#6A7F9C;background:rgba(255,255,255,.8);padding:6px 10px;border-radius:8px">camera preview · simulated</span>
+    <span style="position:absolute;left:18px;top:18px;width:30px;height:30px;border-left:3px solid #1877F2;border-top:3px solid #1877F2;border-radius:8px 0 0 0"></span>
+    <span style="position:absolute;right:18px;top:18px;width:30px;height:30px;border-right:3px solid #1877F2;border-top:3px solid #1877F2;border-radius:0 8px 0 0"></span>
+    <span style="position:absolute;left:18px;bottom:18px;width:30px;height:30px;border-left:3px solid #1877F2;border-bottom:3px solid #1877F2;border-radius:0 0 0 8px"></span>
+    <span style="position:absolute;right:18px;bottom:18px;width:30px;height:30px;border-right:3px solid #1877F2;border-bottom:3px solid #1877F2;border-radius:0 0 8px 0"></span>
+    <sc-if value="{{ vf.scanning }}"><span style="position:absolute;left:8%;right:8%;height:3px;border-radius:2px;background:linear-gradient(90deg,rgba(24,119,242,0),#1877F2,rgba(24,119,242,0));box-shadow:0 0 16px rgba(24,119,242,.6);animation:mtScan 1.6s ease-in-out infinite"></span></sc-if>
+  </div>
+  <sc-if value="{{ vf.ready }}">
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:15px;font-weight:600">Demo outcome</span>
+    <div role="radiogroup" aria-label="Demo outcome" style="display:flex;gap:4px;padding:4px;background:#EEF3FA;border-radius:14px"><sc-for list="{{ vf.opts }}" as="o" hint-placeholder-count="3"><button role="radio" aria-checked="{{ o.active }}" onClick="{{ o.onClick }}" style="flex:1;min-height:44px;border:0;border-radius:11px;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-weight:{{ o.fw }};font-size:15px;transition:all .2s">{{ o.label }}</button></sc-for></div></div>
+    <button onClick="{{ vf.start }}" style="min-height:58px;border:0;border-radius:18px;background:linear-gradient(135deg,#3D95FB,#1877F2);color:#fff;font-size:18px;font-weight:700;box-shadow:0 12px 26px rgba(24,119,242,.3)">Start verification</button>
+  </sc-if>
+  <sc-if value="{{ vf.scanning }}">
+    <div role="status" style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600"><span>Checking medicine…</span><span>{{ vf.pct }}</span></div><div style="height:8px;border-radius:4px;background:#E6EEF9;overflow:hidden"><div style="height:8px;width:{{ vf.pct }};background:linear-gradient(90deg,#5AA6FF,#1877F2)"></div></div></div>
+  </sc-if>
+  <sc-if value="{{ vf.result }}">
+    <div role="status" style="animation:mtPop .3s ease both;padding:18px;border-radius:22px;background:{{ vf.bg }};border:1px solid {{ vf.border }};display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;color:{{ vf.fg }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="{{ vf.icon }}"></path></svg><span style="font-size:19px;font-weight:800">{{ vf.title }}</span></div>
+      <div style="font-size:15px;line-height:1.45;color:#2A3B55">{{ vf.text }}</div>
+      <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:14px;color:#45608A"><span>Demo confidence</span><span style="font-weight:700">{{ vf.conf }}</span></div><div style="height:6px;border-radius:3px;background:rgba(16,27,45,.08)"><div style="height:6px;border-radius:3px;width:{{ vf.conf }};background:{{ vf.fg }}"></div></div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <sc-if value="{{ vf.isMatch }}"><button onClick="{{ vf.confirm }}" style="width:100%;min-height:58px;border:0;border-radius:18px;background:linear-gradient(135deg,#3D95FB,#1877F2);color:#fff;font-size:18px;font-weight:700;box-shadow:0 12px 26px rgba(24,119,242,.3)">Record dose as taken</button></sc-if>
+      <sc-if value="{{ vf.notMatch }}"><button onClick="{{ vf.manual }}" style="width:100%;min-height:56px;border:0;border-radius:18px;background:#1877F2;color:#fff;font-size:17px;font-weight:700">I'm sure — confirm manually</button></sc-if>
+      <sc-if value="{{ vf.isUncertain }}"><button onClick="{{ vf.ask }}" style="width:100%;min-height:54px;border-radius:16px;border:1px solid #F1C9C2;background:#fff;color:#A3362A;font-size:16px;font-weight:700">Ask caregiver to check</button></sc-if>
+      <button onClick="{{ vf.retry }}" style="min-height:52px;border-radius:16px;border:1px solid #D6E5F8;background:#fff;color:#1462D6;font-size:16px;font-weight:700">Try again</button>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.analytics }}" hint-placeholder-val="{{ false }}">
+<div style="animation:mtIn .3s ease both;display:flex;flex-direction:column;gap:16px">
+  <div><h1 style="margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em">Analytics</h1><div style="font-size:15px;color:#647A99;margin-top:2px">Medication adherence · demo data</div></div>
+  <div role="radiogroup" aria-label="Date range" style="display:flex;gap:4px;padding:4px;background:#EEF3FA;border-radius:14px"><sc-for list="{{ rangeOpts }}" as="o" hint-placeholder-count="3"><button role="radio" aria-checked="{{ o.active }}" onClick="{{ o.onClick }}" style="flex:1;min-height:44px;border:0;border-radius:11px;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-weight:{{ o.fw }};font-size:15px;transition:all .2s">{{ o.label }}</button></sc-for></div>
+  <div style="padding:20px;border-radius:24px;background:linear-gradient(160deg,#FFFFFF,#F1F7FF);border:1px solid #E1EBF8;box-shadow:0 14px 34px rgba(28,84,160,.10);display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+      <div><div style="font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1">{{ an.pct }}</div><div style="font-size:15px;color:#45608A;margin-top:4px">{{ an.count }}</div></div>
+      <div style="display:flex;flex-direction:column;gap:4px;font-size:14px;color:#2A3B55">
+        <span style="display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;border-radius:4px;background:#1877F2"></span>Taken {{ an.T }}</span>
+        <span style="display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;border-radius:4px;background:#EE8B3A"></span>Unverified {{ an.U }}</span>
+        <span style="display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;border-radius:4px;background:#DC4F40"></span>Missed {{ an.M }}</span>
+      </div>
+    </div>
+    <div role="img" aria-label="{{ an.aria }}" style="display:flex;align-items:flex-end;gap:{{ an.gap }};height:150px">
+      <sc-for list="{{ an.bars }}" as="b" hint-placeholder-count="7">
+        <div title="{{ b.title }}" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="width:100%;max-width:28px;height:120px;display:flex;flex-direction:column-reverse;gap:2px;border-radius:8px;overflow:hidden;background:#EEF3FA">
+            <div style="height:{{ b.th }};background:linear-gradient(180deg,#5AA6FF,#1877F2);transition:height .5s ease"></div>
+            <div style="height:{{ b.uh }};background:#EE8B3A;transition:height .5s ease"></div>
+            <div style="height:{{ b.mh }};background:#DC4F40;transition:height .5s ease"></div>
+          </div>
+          <span style="font-size:13px;color:{{ b.lc }};font-weight:{{ b.lw }};white-space:nowrap;height:16px">{{ b.label }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="border-radius:22px;background:#fff;border:1px solid #E4ECF8;overflow:hidden">
+    <h2 style="margin:0;padding:16px 18px 6px;font-size:17px;font-weight:700">By medication</h2>
+    <sc-for list="{{ an.per }}" as="p" hint-placeholder-count="3"><div style="padding:12px 18px 14px;border-top:1px solid #EEF3FA;display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;gap:10px"><span style="font-size:16px;font-weight:700">{{ p.name }}</span><span style="font-size:16px;font-weight:700">{{ p.rate }}</span></div><div style="height:8px;border-radius:4px;background:#EEF3FA;overflow:hidden"><div style="height:8px;width:{{ p.rate }};background:linear-gradient(90deg,#5AA6FF,#1877F2);transition:width .5s ease"></div></div><span style="font-size:14px;color:#647A99">{{ p.detail }}</span></div></sc-for>
+  </div>
+  <div style="padding:18px;border-radius:22px;background:#F6F9FF;border:1px solid #E1EBF8;display:flex;flex-direction:column;gap:8px">
+    <h2 style="margin:0;font-size:17px;font-weight:700">Summary</h2>
+    <sc-for list="{{ an.notes }}" as="n" hint-placeholder-count="2"><p style="margin:0;font-size:15px;line-height:1.5;color:#2A3B55;text-wrap:pretty">{{ n }}</p></sc-for>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.notes }}" hint-placeholder-val="{{ false }}">
+<div style="animation:mtIn .3s ease both;display:flex;flex-direction:column;gap:16px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button aria-label="Back" onClick="{{ back }}" style="width:48px;height:48px;border-radius:16px;border:1px solid #E6EEF9;background:#fff;box-shadow:0 4px 12px rgba(28,84,160,.08);display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"></path></svg></button>
+    <h1 style="margin:0;flex:1;font-size:22px;font-weight:700">Notifications &amp; Safety</h1>
+  </div>
+  <div style="padding:16px;border-radius:22px;background:#fff;border:1px solid #E4ECF8;box-shadow:0 10px 28px rgba(28,84,160,.08);display:flex;gap:14px;align-items:center">
+    <span style="width:48px;height:48px;border-radius:16px;background:{{ safety.tile }};color:{{ safety.color }};display:grid;place-items:center;flex:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.5 3.2 8.2 7.5 9.5 4.3-1.3 7.5-5 7.5-9.5V6z"></path><path d="{{ safety.glyph }}"></path></svg></span>
+    <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:18px;font-weight:800;color:{{ safety.color }}">{{ safety.title }}</span><span style="font-size:14px;color:#647A99">{{ safety.text }}</span><span style="font-size:14px;color:#45608A">{{ cgLine }}</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div role="tablist" style="display:flex;gap:8px;flex:1;overflow-x:auto"><sc-for list="{{ noteFilters }}" as="c" hint-placeholder-count="3"><button role="tab" aria-selected="{{ c.active }}" onClick="{{ c.onClick }}" style="flex:none;min-height:44px;padding:0 15px;border-radius:999px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};font-size:15px;font-weight:600">{{ c.label }}</button></sc-for></div>
+    <button onClick="{{ markAllRead }}" disabled="{{ noUnread }}" style="flex:none;min-height:44px;padding:0 6px;border:0;background:transparent;color:#1877F2;font-size:15px;font-weight:600">Mark all read</button>
+  </div>
+  <sc-if value="{{ hasSched }}"><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;font-weight:700;color:#45608A;text-transform:uppercase;letter-spacing:.06em">Scheduled</span><sc-for list="{{ sched }}" as="r"><div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;background:#F6F9FF;border:1px dashed #CFDDF0;font-size:15px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1877F2" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span style="flex:1">{{ r.text }}</span><span style="font-weight:700">{{ r.time }}</span><button aria-label="Cancel reminder" onClick="{{ r.cancel }}" style="width:44px;height:44px;border:0;background:transparent;display:grid;place-items:center;color:#647A99"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div></sc-for></div></sc-if>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ noteList }}" as="n" hint-placeholder-count="3">
+      <div style="position:relative;padding:14px 14px 14px 14px;border-radius:20px;background:{{ n.cardBg }};border:1px solid {{ n.border }};display:flex;gap:12px;box-shadow:0 6px 18px rgba(28,84,160,.06)">
+        <span style="width:42px;height:42px;border-radius:14px;background:{{ n.tile }};color:{{ n.fg }};display:grid;place-items:center;flex:none"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.icon }}"></path><path d="{{ n.icon2 }}"></path></svg></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13px;font-weight:700;color:{{ n.fg }};text-transform:uppercase;letter-spacing:.05em">{{ n.typeLabel }}</span><span style="font-size:13px;color:#647A99">{{ n.time }}</span><sc-if value="{{ n.unread }}"><span style="font-size:12px;font-weight:700;color:#fff;background:#1877F2;padding:2px 7px;border-radius:999px">New</span></sc-if></div>
+          <span style="font-size:16px;font-weight:700">{{ n.title }}</span>
+          <span style="font-size:15px;color:#45608A;line-height:1.4">{{ n.body }}</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+            <sc-if value="{{ n.hasAlert }}"><button onClick="{{ n.openAlert }}" style="min-height:44px;padding:0 14px;border-radius:13px;border:0;background:#D9473A;color:#fff;font-weight:700;font-size:15px">Open alert</button></sc-if>
+            <sc-if value="{{ n.hasDose }}"><button onClick="{{ n.openDose }}" style="min-height:44px;padding:0 14px;border-radius:13px;border:0;background:#1877F2;color:#fff;font-weight:700;font-size:15px">Confirm dose</button></sc-if>
+            <sc-if value="{{ n.hasLink }}"><button onClick="{{ n.openLink }}" style="min-height:44px;padding:0 14px;border-radius:13px;border:1px solid #D6E5F8;background:#fff;color:#1462D6;font-weight:700;font-size:15px">Open Analytics</button></sc-if>
+            <sc-if value="{{ n.showAck }}"><button onClick="{{ n.ack }}" style="min-height:44px;padding:0 14px;border-radius:13px;border:1px solid #D6E5F8;background:#fff;color:#1462D6;font-weight:700;font-size:15px">Acknowledge</button></sc-if>
+            <sc-if value="{{ n.acked }}"><span style="display:flex;align-items:center;gap:5px;min-height:44px;font-size:14px;color:#45608A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>Acknowledged</span></sc-if>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+    <sc-if value="{{ noteEmpty }}"><div style="padding:32px 20px;border-radius:20px;border:1px dashed #CFDDF0;text-align:center;display:flex;flex-direction:column;gap:6px"><span style="font-size:17px;font-weight:700">Nothing here</span><span style="font-size:15px;color:#647A99">{{ noteEmptyText }}</span></div></sc-if>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.alert }}" hint-placeholder-val="{{ false }}">
+<div style="animation:mtIn .3s ease both;display:flex;flex-direction:column;gap:16px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button aria-label="Back" onClick="{{ back }}" style="width:48px;height:48px;border-radius:16px;border:1px solid #E6EEF9;background:#fff;box-shadow:0 4px 12px rgba(28,84,160,.08);display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"></path></svg></button>
+    <h1 style="margin:0;flex:1;font-size:22px;font-weight:700">Caregiver alert</h1>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:14px;background:#F3F6FB;font-size:14px;color:#45608A"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>Caregiver view · Daniel Lee (demo). No real calls or messages are sent.</div>
+  <sc-if value="{{ al.missing }}"><div style="padding:32px 20px;border-radius:20px;border:1px dashed #CFDDF0;text-align:center;font-size:16px;color:#647A99">This alert is no longer available.</div></sc-if>
+  <sc-if value="{{ al.exists }}">
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div style="padding:20px;border-radius:26px;background:{{ al.heroBg }};border:1px solid {{ al.heroBorder }};box-shadow:0 14px 34px rgba(28,84,160,.10);display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="width:48px;height:48px;border-radius:16px;background:{{ al.tile }};color:{{ al.fg }};display:grid;place-items:center;flex:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ al.icon }}"></path><path d="{{ al.icon2 }}"></path></svg></span><div style="display:flex;flex-direction:column"><span style="font-size:13px;font-weight:700;color:{{ al.fg }};text-transform:uppercase;letter-spacing:.06em">{{ al.stageLabel }}</span><span style="font-size:21px;font-weight:800">{{ al.title }}</span></div></div>
+      <p style="margin:0;font-size:16px;line-height:1.45;color:#2A3B55">{{ al.text }}</p>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px"><sc-for list="{{ al.facts }}" as="f" hint-placeholder-count="4"><div style="padding:12px;border-radius:14px;background:rgba(255,255,255,.85);border:1px solid rgba(16,27,45,.06);display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:#647A99">{{ f.k }}</span><span style="font-size:16px;font-weight:700">{{ f.v }}</span></div></sc-for></div>
+    </div>
+    <div aria-label="Safety loop progress" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">
+      <sc-for list="{{ al.steps }}" as="st" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start"><div style="height:6px;width:100%;border-radius:3px;background:{{ st.bar }}"></div><span style="font-size:13px;font-weight:700;letter-spacing:.04em;color:{{ st.fg }}">{{ st.label }}</span><span style="font-size:13px;color:#647A99">{{ st.sub }}</span></div></sc-for>
+    </div>
+    <sc-if value="{{ al.isEscalated }}"><button onClick="{{ al.ack }}" style="min-height:58px;border:0;border-radius:18px;background:linear-gradient(135deg,#3D95FB,#1877F2);color:#fff;font-size:18px;font-weight:700;box-shadow:0 12px 26px rgba(24,119,242,.3)">Acknowledge alert</button></sc-if>
+    <sc-if value="{{ al.isAck }}"><div style="display:flex;flex-direction:column;gap:10px"><button onClick="{{ al.call }}" style="min-height:58px;border:0;border-radius:18px;background:linear-gradient(135deg,#3D95FB,#1877F2);color:#fff;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 12px 26px rgba(24,119,242,.3)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1C11 20 4 13 4 5a1 1 0 0 1 1-1z"></path></svg>Call Margaret (simulated)</button><button onClick="{{ al.record }}" style="min-height:54px;border-radius:16px;border:1px solid #D6E5F8;background:#fff;color:#1462D6;font-size:16px;font-weight:700">Record outcome</button></div></sc-if>
+    <sc-if value="{{ al.isOutcome }}"><div style="display:flex;flex-direction:column;gap:10px"><div style="padding:14px 16px;border-radius:18px;background:#F6F9FF;border:1px solid #E1EBF8;display:flex;flex-direction:column;gap:4px"><span style="font-size:14px;color:#647A99">Recorded outcome</span><span style="font-size:16px;font-weight:700">{{ al.outcomeLabel }}</span><sc-if value="{{ al.note }}"><span style="font-size:15px;color:#45608A">"{{ al.note }}"</span></sc-if></div><button onClick="{{ al.resolve }}" style="min-height:58px;border:0;border-radius:18px;background:#138A68;color:#fff;font-size:18px;font-weight:700;box-shadow:0 12px 26px rgba(19,138,104,.28)">Resolve alert</button><button onClick="{{ al.record }}" style="min-height:50px;border-radius:16px;border:1px solid #D6E5F8;background:#fff;color:#1462D6;font-size:16px;font-weight:700">Change outcome</button></div></sc-if>
+    <sc-if value="{{ al.isResolved }}"><div style="padding:18px;border-radius:22px;background:#EEF9F4;border:1px solid #C9EBDD;display:flex;flex-direction:column;gap:6px"><span style="font-size:17px;font-weight:800;color:#0F7457">Resolution summary</span><span style="font-size:15px;line-height:1.5;color:#2A3B55">{{ al.summary }}</span></div></sc-if>
+    <div style="border-radius:22px;background:#fff;border:1px solid #E4ECF8;overflow:hidden">
+      <h2 style="margin:0;padding:16px 18px 8px;font-size:17px;font-weight:700">Activity</h2>
+      <sc-for list="{{ al.log }}" as="l" hint-placeholder-count="2"><div style="display:flex;gap:12px;padding:12px 18px;border-top:1px solid #EEF3FA"><span style="font-size:14px;color:#647A99;width:72px;flex:none">{{ l.when }}</span><span style="font-size:15px;flex:1">{{ l.text }}</span></div></sc-for>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.profile }}" hint-placeholder-val="{{ false }}">
+<div style="animation:mtIn .3s ease both;display:flex;flex-direction:column;gap:16px">
+  <h1 style="margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em">Profile</h1>
+  <div style="padding:18px;border-radius:24px;background:linear-gradient(160deg,#FFFFFF,#F1F7FF);border:1px solid #E1EBF8;box-shadow:0 12px 30px rgba(28,84,160,.10);display:flex;align-items:center;gap:14px">
+    <span style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#BCD9FF,#4F97F6);color:#fff;font-weight:800;font-size:22px;display:grid;place-items:center;border:3px solid #fff;box-shadow:0 6px 16px rgba(28,84,160,.2);flex:none">ML</span>
+    <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:20px;font-weight:800">Margaret Lee</span><span style="font-size:15px;color:#647A99">Age 74 · Demo profile, synthetic data</span></div>
+  </div>
+  <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="3">
+    <div style="border-radius:22px;background:#fff;border:1px solid #E4ECF8;overflow:hidden">
+      <h2 style="margin:0;padding:16px 16px 8px;font-size:14px;font-weight:700;color:#45608A;text-transform:uppercase;letter-spacing:.06em">{{ sec.title }}</h2>
+      <sc-if value="{{ sec.cg }}"><div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #EEF3FA"><span style="width:44px;height:44px;border-radius:50%;background:#E4F0FF;color:#1462D6;font-weight:800;display:grid;place-items:center;flex:none">DL</span><span style="flex:1;display:flex;flex-direction:column"><span style="font-size:16px;font-weight:700">Daniel Lee · Son</span><span style="font-size:14px;color:#647A99">+1 (555) 010-0142 · demo number</span></span></div></sc-if>
+      <sc-for list="{{ sec.toggles }}" as="t"><button role="switch" aria-checked="{{ t.on }}" onClick="{{ t.toggle }}" style="width:100%;display:flex;align-items:center;gap:14px;padding:12px 16px;border:0;border-top:1px solid #EEF3FA;background:transparent;text-align:left;min-height:64px"><span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;font-weight:600">{{ t.label }}</span><span style="font-size:14px;color:#647A99">{{ t.sub }}</span></span><span style="position:relative;width:52px;height:32px;border-radius:16px;background:{{ t.track }};transition:background .2s;flex:none"><span style="position:absolute;top:3px;left:{{ t.knob }};width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(16,27,45,.25);transition:left .2s"></span></span></button></sc-for>
+      <sc-for list="{{ sec.segs }}" as="g"><div style="padding:12px 16px 14px;border-top:1px solid #EEF3FA;display:flex;flex-direction:column;gap:8px"><span style="font-size:16px;font-weight:600">{{ g.label }}</span><div role="radiogroup" aria-label="{{ g.label }}" style="display:flex;gap:4px;padding:4px;background:#EEF3FA;border-radius:14px"><sc-for list="{{ g.opts }}" as="o"><button role="radio" aria-checked="{{ o.active }}" onClick="{{ o.onClick }}" style="flex:1;min-height:44px;border:0;border-radius:11px;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-weight:{{ o.fw }};font-size:15px;transition:all .2s">{{ o.label }}</button></sc-for></div><sc-if value="{{ g.sub }}"><span style="font-size:14px;color:#647A99">{{ g.sub }}</span></sc-if></div></sc-for>
+    </div>
+  </sc-for>
+  <div style="padding:16px;border-radius:22px;background:#F6F9FF;border:1px solid #E1EBF8;display:flex;flex-direction:column;gap:8px">
+    <h2 style="margin:0;font-size:14px;font-weight:700;color:#45608A;text-transform:uppercase;letter-spacing:.06em">Privacy &amp; security</h2>
+    <p style="margin:0;font-size:15px;line-height:1.5;color:#2A3B55">This is a prototype. Everything you change is saved only in this browser and isn't sent to a server. Caregiver alerts, calls and verification are simulated. No real messages, calls or image analysis happen.</p>
+  </div>
+  <div style="padding:16px;border-radius:22px;background:#fff;border:1px dashed #BCD3F2;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0;font-size:14px;font-weight:700;color:#45608A;text-transform:uppercase;letter-spacing:.06em">Demo controls</h2><span style="font-size:15px;font-weight:700">{{ clockText }}</span></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px"><button onClick="{{ openDemo }}" style="min-height:48px;border-radius:14px;border:1px solid #D6E5F8;background:#fff;color:#1462D6;font-weight:700;font-size:15px">Move demo clock</button><button onClick="{{ confirmReset }}" style="min-height:48px;border-radius:14px;border:1px solid #F1C9C2;background:#fff;color:#A3362A;font-weight:700;font-size:15px">Reset demo</button></div>
+  </div>
+  <button onClick="{{ goHome }}" style="min-height:54px;border-radius:16px;border:0;background:#EAF2FE;color:#1462D6;font-size:16px;font-weight:700">Back to dashboard</button>
+</div>
+</sc-if>
+
+</main>
+</div>
+
+<nav aria-label="Main" style="position:absolute;left:14px;right:14px;bottom:calc(env(safe-area-inset-bottom) + 12px);z-index:20;display:flex;padding:6px;border-radius:26px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid #E4ECF8;box-shadow:0 12px 32px rgba(28,84,160,.14)">
+  <sc-for list="{{ nav }}" as="t" hint-placeholder-count="4">
+    <button onClick="{{ t.onClick }}" aria-current="{{ t.current }}" style="flex:1;min-height:58px;border:0;border-radius:20px;background:{{ t.bg }};color:{{ t.fg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:13px;font-weight:{{ t.fw }};transition:color .2s,background .2s">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="{{ t.fill }}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.d1 }}"></path><path d="{{ t.d2 }}" fill="none"></path></svg>
+      {{ t.label }}
+    </button>
+  </sc-for>
+</nav>
+
+<sc-if value="{{ toast }}"><div role="status" aria-live="polite" style="position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translateX(-50%);z-index:60;max-width:calc(100% - 32px);padding:12px 18px;border-radius:16px;background:#101B2D;color:#fff;font-size:15px;font-weight:600;box-shadow:0 12px 28px rgba(16,27,45,.3);animation:mtFade .2s ease both;text-align:center">{{ toast }}</div></sc-if>
+
+<sc-if value="{{ sheetOpen }}">
+  <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:30;background:rgba(16,27,45,.34);animation:mtFade .2s ease both"></div>
+  <div role="dialog" aria-modal="true" aria-label="{{ sheetLabel }}" style="position:absolute;left:0;right:0;bottom:0;z-index:31;max-height:90%;overflow-y:auto;background:#fff;border-radius:28px 28px 0 0;box-shadow:0 -20px 50px rgba(16,27,45,.18);padding:10px 20px calc(env(safe-area-inset-bottom) + 22px);animation:mtSheet .32s cubic-bezier(.2,.8,.2,1) both">
+    <div style="width:40px;height:5px;border-radius:3px;background:#D5DFEC;margin:0 auto 10px"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px"><h2 style="margin:0;font-size:21px;font-weight:800">{{ sheetLabel }}</h2><button aria-label="Close" onClick="{{ closeSheet }}" style="width:44px;height:44px;border-radius:14px;border:0;background:#F1F5FB;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div>
+
+    <sc-if value="{{ sh.voice }}">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0">
+        <div style="position:relative;width:104px;height:104px;display:grid;place-items:center">
+          <sc-if value="{{ vo.listening }}"><span style="position:absolute;inset:0;border-radius:50%;background:#5AA6FF;animation:mtPulse 1.6s ease-out infinite"></span><span style="position:absolute;inset:0;border-radius:50%;background:#5AA6FF;animation:mtPulse 1.6s ease-out .8s infinite"></span></sc-if>
+          <button onClick="{{ vo.micClick }}" aria-label="{{ vo.micLabel }}" style="position:relative;width:96px;height:96px;border-radius:50%;border:0;background:{{ vo.micBg }};color:#fff;display:grid;place-items:center;box-shadow:0 14px 30px rgba(24,119,242,.38)"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="{{ vo.micIcon }}"></path><path d="{{ vo.micIcon2 }}"></path></svg></button>
+        </div>
+        <span role="status" style="font-size:16px;font-weight:600;color:{{ vo.msgColor }};text-align:center;max-width:320px">{{ vo.msg }}</span>
+      </div>
+      <sc-if value="{{ vo.hasText }}"><div style="padding:14px 16px;border-radius:18px;background:#F6F9FF;border:1px solid #E1EBF8;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;font-weight:700;color:#647A99;text-transform:uppercase;letter-spacing:.06em">{{ vo.sourceLabel }}</span><span style="font-size:18px;font-weight:600">"{{ vo.text }}"</span></div></sc-if>
+      <sc-if value="{{ vo.hasInterp }}"><div style="animation:mtPop .25s ease both;padding:16px;border-radius:20px;background:#fff;border:1.5px solid {{ vo.interpBorder }};box-shadow:0 10px 26px rgba(28,84,160,.10);display:flex;flex-direction:column;gap:10px"><span style="font-size:13px;font-weight:700;color:#647A99;text-transform:uppercase;letter-spacing:.06em">{{ vo.interpHead }}</span><span style="font-size:18px;font-weight:800">{{ vo.interpTitle }}</span><span style="font-size:15px;color:#45608A;line-height:1.4">{{ vo.interpDetail }}</span><sc-if value="{{ vo.canRun }}"><div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:4px"><button onClick="{{ vo.cancel }}" style="min-height:50px;border-radius:14px;border:1px solid #D6E5F8;background:#fff;color:#45608A;font-weight:700;font-size:16px">Cancel</button><button onClick="{{ vo.run }}" style="min-height:50px;border-radius:14px;border:0;background:#1877F2;color:#fff;font-weight:700;font-size:16px">Confirm</button></div></sc-if></div></sc-if>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <label for="mtVoiceInput" style="font-size:15px;font-weight:600">Or type a command</label>
+        <div style="display:flex;gap:8px"><input id="mtVoiceInput" value="{{ voiceInput }}" onChange="{{ onVoiceInput }}" onKeyDown="{{ onVoiceKey }}" placeholder="e.g. I have taken my medicine" style="flex:1;min-width:0;height:52px;border-radius:14px;border:1.5px solid #D6E2F2;padding:0 14px;font-size:16px;background:#fff"><button onClick="{{ submitVoice }}" style="min-width:72px;height:52px;border-radius:14px;border:0;background:#101B2D;color:#fff;font-weight:700;font-size:15px">Send</button></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ suggestions }}" as="g" hint-placeholder-count="3"><button onClick="{{ g.onClick }}" style="min-height:44px;padding:0 13px;border-radius:999px;border:1px solid #D6E5F8;background:#F6F9FF;color:#1462D6;font-size:14px;font-weight:600">{{ g.label }}</button></sc-for></div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ sh.defer }}">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:15px;color:#45608A">{{ cur.title }} is set for {{ cur.time }}. When should we remind you?</span>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"><sc-for list="{{ deferOpts }}" as="d" hint-placeholder-count="3"><button onClick="{{ d.onClick }}" style="min-height:56px;border-radius:16px;border:1px solid #D6E5F8;background:#F6F9FF;color:#1462D6;font-size:16px;font-weight:700">{{ d.label }}</button></sc-for></div>
+      <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:600">Or pick a time today</span><input type="time" value="{{ deferTime }}" onChange="{{ onDeferTime }}" style="height:52px;border-radius:14px;border:1.5px solid {{ deferErrB }};padding:0 14px;font-size:17px;background:#fff"></label>
+      <sc-if value="{{ deferErr }}"><span role="alert" style="font-size:14px;color:#B5362A">{{ deferErr }}</span></sc-if>
+      <button onClick="{{ saveDeferTime }}" style="min-height:54px;border:0;border-radius:16px;background:#1877F2;color:#fff;font-size:17px;font-weight:700">Save new time</button>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ sh.form }}">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:600">Medicine name</span><input value="{{ form.name }}" onChange="{{ fName }}" placeholder="e.g. Lisinopril" style="height:52px;border-radius:14px;border:1.5px solid {{ fe.nameB }};padding:0 14px;font-size:17px;background:#fff"><sc-if value="{{ fe.name }}"><span role="alert" style="font-size:14px;color:#B5362A">{{ fe.name }}</span></sc-if></label>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:600">Strength</span><input value="{{ form.dose }}" onChange="{{ fDose }}" placeholder="e.g. 10 mg" style="height:52px;border-radius:14px;border:1.5px solid {{ fe.doseB }};padding:0 14px;font-size:17px;background:#fff;min-width:0"></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:600">Amount</span><select value="{{ form.qty }}" onChange="{{ fQty }}" style="height:52px;border-radius:14px;border:1.5px solid #D6E2F2;padding:0 10px;font-size:16px;background:#fff;min-width:0"><sc-for list="{{ qtyOpts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></label>
+      </div>
+      <sc-if value="{{ fe.dose }}"><span role="alert" style="font-size:14px;color:#B5362A;margin-top:-6px">{{ fe.dose }}</span></sc-if>
+      <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:600">What is it for? (optional)</span><input value="{{ form.purpose }}" onChange="{{ fPurpose }}" placeholder="e.g. Blood pressure" style="height:52px;border-radius:14px;border:1.5px solid #D6E2F2;padding:0 14px;font-size:17px;background:#fff"></label>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:600">Reminder time</span><input type="time" value="{{ form.time }}" onChange="{{ fTime }}" style="height:52px;border-radius:14px;border:1.5px solid {{ fe.timeB }};padding:0 12px;font-size:17px;background:#fff;min-width:0"></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:600">Instructions</span><select value="{{ form.instr }}" onChange="{{ fInstr }}" style="height:52px;border-radius:14px;border:1.5px solid #D6E2F2;padding:0 10px;font-size:16px;background:#fff;min-width:0"><sc-for list="{{ instrOpts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></label>
+      </div>
+      <sc-if value="{{ fe.time }}"><span role="alert" style="font-size:14px;color:#B5362A;margin-top:-6px">{{ fe.time }}</span></sc-if>
+      <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:600">Repeats</span><div role="radiogroup" aria-label="Repeats" style="display:flex;gap:4px;padding:4px;background:#EEF3FA;border-radius:14px"><sc-for list="{{ recOpts }}" as="o"><button role="radio" aria-checked="{{ o.active }}" onClick="{{ o.onClick }}" style="flex:1;min-height:44px;border:0;border-radius:11px;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-weight:{{ o.fw }};font-size:14px">{{ o.label }}</button></sc-for></div></div>
+      <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:600">Pill colour</span><div role="radiogroup" aria-label="Pill colour" style="display:flex;gap:10px"><sc-for list="{{ colorOpts }}" as="o"><button role="radio" aria-checked="{{ o.active }}" aria-label="{{ o.label }}" onClick="{{ o.onClick }}" style="width:48px;height:48px;border-radius:16px;border:2px solid {{ o.ring }};background:{{ o.tile }};display:grid;place-items:center"><span style="width:22px;height:22px;border-radius:50%;background:{{ o.pa }};box-shadow:0 2px 5px rgba(16,27,45,.2)"></span></button></sc-for></div></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:4px"><button onClick="{{ closeSheet }}" style="min-height:54px;border-radius:16px;border:1px solid #D6E5F8;background:#fff;color:#45608A;font-size:16px;font-weight:700">Cancel</button><button onClick="{{ saveForm }}" style="min-height:54px;border:0;border-radius:16px;background:#1877F2;color:#fff;font-size:16px;font-weight:700">{{ formSave }}</button></div>
+      <sc-if value="{{ formIsEdit }}"><button onClick="{{ confirmRemove }}" style="min-height:48px;border:0;background:transparent;color:#B5362A;font-size:15px;font-weight:700">Remove this medication</button></sc-if>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ sh.demo }}">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:15px;color:#45608A">Demo clock</span><span style="font-size:28px;font-weight:800">{{ clockText }}</span></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px">
+        <button onClick="{{ adv15 }}" style="min-height:52px;border-radius:14px;border:1px solid #D6E5F8;background:#F6F9FF;color:#1462D6;font-weight:700;font-size:16px">+15 min</button>
+        <button onClick="{{ adv60 }}" style="min-height:52px;border-radius:14px;border:1px solid #D6E5F8;background:#F6F9FF;color:#1462D6;font-weight:700;font-size:16px">+1 hour</button>
+      </div>
+      <button onClick="{{ jumpNext }}" style="min-height:52px;border-radius:14px;border:1px solid #D6E5F8;background:#fff;color:#1462D6;font-weight:700;font-size:16px">Jump to next reminder</button>
+      <button onClick="{{ jumpEsc }}" style="min-height:54px;border:0;border-radius:14px;background:#1877F2;color:#fff;font-weight:700;font-size:16px">Skip ahead to caregiver escalation</button>
+      <span style="font-size:14px;color:#647A99;line-height:1.4">Doses become "Awaiting confirmation" at their reminder time. If nothing is confirmed within {{ thrText }}, they turn Unverified and the caregiver is alerted. Change the threshold in Profile.</span>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ sh.call }}">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:6px 0 4px">
+      <div style="position:relative;width:96px;height:96px;display:grid;place-items:center"><sc-if value="{{ callRinging }}"><span style="position:absolute;inset:0;border-radius:50%;background:#9CC6FF;animation:mtPulse 1.4s ease-out infinite"></span></sc-if><span style="position:relative;width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#BCD9FF,#4F97F6);color:#fff;font-size:28px;font-weight:800;display:grid;place-items:center;border:3px solid #fff">ML</span></div>
+      <span style="font-size:20px;font-weight:800">Margaret Lee</span>
+      <span role="status" style="font-size:16px;color:#45608A">{{ callStatus }}</span>
+      <span style="font-size:14px;color:#647A99;text-align:center">Simulated call. No real call is placed.</span>
+      <button onClick="{{ endCall }}" style="width:100%;min-height:56px;border:0;border-radius:18px;background:#D9473A;color:#fff;font-size:17px;font-weight:700">End call</button>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ sh.outcome }}">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span style="font-size:15px;color:#45608A">What did you find out?</span>
+      <div role="radiogroup" style="display:flex;flex-direction:column;gap:8px"><sc-for list="{{ outcomeOpts }}" as="o" hint-placeholder-count="4"><button role="radio" aria-checked="{{ o.active }}" onClick="{{ o.onClick }}" style="display:flex;align-items:center;gap:12px;min-height:56px;padding:0 16px;border-radius:16px;border:1.5px solid {{ o.border }};background:{{ o.bg }};text-align:left;font-size:16px;font-weight:600"><span style="width:22px;height:22px;border-radius:50%;border:2px solid {{ o.border }};display:grid;place-items:center;flex:none"><span style="width:10px;height:10px;border-radius:50%;background:{{ o.dot }}"></span></span>{{ o.label }}</button></sc-for></div>
+      <sc-if value="{{ outcomeErr }}"><span role="alert" style="font-size:14px;color:#B5362A">{{ outcomeErr }}</span></sc-if>
+      <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:600">Note (optional)</span><textarea value="{{ outcomeNote }}" onChange="{{ onOutcomeNote }}" rows="2" placeholder="e.g. She took it with lunch, forgot to tap" style="border-radius:14px;border:1.5px solid #D6E2F2;padding:12px 14px;font-size:16px;resize:none"></textarea></label>
+      <button onClick="{{ saveOutcome }}" style="min-height:54px;border:0;border-radius:16px;background:#1877F2;color:#fff;font-size:17px;font-weight:700">Save outcome</button>
+    </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ dialogOpen }}">
+  <div onClick="{{ closeDialog }}" style="position:absolute;inset:0;z-index:40;background:rgba(16,27,45,.4);animation:mtFade .2s ease both"></div>
+  <div role="alertdialog" aria-modal="true" aria-label="{{ dlg.title }}" style="position:absolute;left:20px;right:20px;top:50%;transform:translateY(-50%);z-index:41;padding:22px;border-radius:26px;background:#fff;box-shadow:0 30px 60px rgba(16,27,45,.25);display:flex;flex-direction:column;gap:10px;animation:mtFade .2s ease both">
+    <h2 style="margin:0;font-size:20px;font-weight:800">{{ dlg.title }}</h2>
+    <p style="margin:0;font-size:16px;line-height:1.45;color:#45608A">{{ dlg.body }}</p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:8px"><button onClick="{{ closeDialog }}" style="min-height:52px;border-radius:15px;border:1px solid #D6E5F8;background:#fff;color:#45608A;font-size:16px;font-weight:700">Cancel</button><button onClick="{{ runDialog }}" style="min-height:52px;border:0;border-radius:15px;background:{{ dlg.bg }};color:#fff;font-size:16px;font-weight:700">{{ dlg.label }}</button></div>
+  </div>
+</sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showDemoChip&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;},&quot;showIllustration&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Home&quot;}}">
+const KEY = 'meditrack-demo-v1';
+const DAY0 = new Date(2026, 9, 26);
+const fmt = m => { m = ((Math.round(m) % 1440) + 1440) % 1440; let h = Math.floor(m / 60); const mm = m % 60; const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return h + ':' + String(mm).padStart(2, '0') + ' ' + ap; };
+const toHM = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+const fromHM = s => { if (!s) return null; const [h, m] = s.split(':').map(Number); return isNaN(h) || isNaN(m) ? null : h * 60 + m; };
+const dur = m => { m = Math.max(0, Math.round(m)); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + (m % 60 ? (m % 60) + ' min' : ''); };
+const WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MO = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const PILLS = {
+  blue: { a: 'linear-gradient(180deg,#62AAFF,#1668E3)', b: 'linear-gradient(180deg,#FFFFFF,#D8E4F5)', tile: '#E8F2FF', cap: true, line: 'rgba(255,255,255,.5)', label: 'Blue capsule' },
+  pink: { a: 'radial-gradient(circle at 35% 30%,#FFB8C2,#E2566B)', tile: '#FDECEF', cap: false, line: 'rgba(255,255,255,.6)', label: 'Pink tablet' },
+  white: { a: 'radial-gradient(circle at 35% 30%,#FFFFFF,#D3DDEA)', tile: '#EEF2F7', cap: false, line: 'rgba(16,27,45,.12)', label: 'White tablet' },
+  amber: { a: 'linear-gradient(180deg,#FFD27A,#E2961A)', b: 'linear-gradient(180deg,#FFFFFF,#F2E6D2)', tile: '#FFF5E2', cap: true, line: 'rgba(255,255,255,.5)', label: 'Amber capsule' }
+};
+const ST = {
+  taken: { label: 'Taken', fg: '#1462D6', bg: '#E4F0FF' },
+  upcoming: { label: 'Upcoming', fg: '#3F5A82', bg: '#EFF4FB' },
+  due: { label: 'Awaiting', fg: '#855000', bg: '#FFF1D3' },
+  unverified: { label: 'Unverified', fg: '#A3420F', bg: '#FDE9DC' },
+  missed: { label: 'Missed', fg: '#A3302A', bg: '#FDE8E6' },
+  later: { label: 'Starts tomorrow', fg: '#56698A', bg: '#F1F4F8' }
+};
+const METHOD = { voice: 'Self-reported by voice', manual: 'Confirmed manually', verified: 'Verified (simulated check)', caregiver: 'Confirmed by caregiver' };
+const HID = ['m1', 'm2', 'm3'];
+const HIST = (() => { const out = []; for (let d = 30; d >= 1; d--) { const date = new Date(DAY0); date.setDate(DAY0.getDate() - d); const s = HID.map((id, k) => { const r = (d * 7 + k * 13 + d * k * 3) % 17; return r === 0 ? 'missed' : (r === 1 || r === 2 || (k === 2 && r === 3)) ? 'unverified' : 'taken'; }); out.push({ date, s }); } return out; })();
+const OUTCOMES = [
+  { k: 'taken_phone', l: 'Margaret confirmed she took it' },
+  { k: 'taking_now', l: 'Margaret is taking it now' },
+  { k: 'missed', l: 'Dose missed, skip until next time' },
+  { k: 'unreachable', l: "Couldn't reach Margaret" }
+];
+const I = {
+  check: 'm5 12.5 4.5 4.5L19 7.5', alert: 'M12 3.5 2.5 20h19z', alert2: 'M12 10v4.5M12 17.5v.01',
+  bell: 'M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z', bell2: 'M10 20.5a2 2 0 0 0 4 0',
+  clock: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z', clock2: 'M12 7v5l3 2', bang: 'M12 7v6M12 16.5v.01'
+};
+function initialData() {
+  return {
+    clock: 581,
+    meds: [
+      { id: 'm1', name: 'Amlodipine', dose: '5 mg', qty: '1 tablet', instr: 'After breakfast', time: 480, rec: 'Daily', color: 'blue', purpose: 'Blood pressure' },
+      { id: 'm2', name: 'Metformin', dose: '500 mg', qty: '1 tablet', instr: 'After lunch', time: 780, rec: 'Daily', color: 'pink', purpose: 'Blood sugar' },
+      { id: 'm3', name: 'Atorvastatin', dose: '10 mg', qty: '1 tablet', instr: 'After dinner', time: 1200, rec: 'Daily', color: 'white', purpose: 'Cholesterol' }
+    ],
+    doses: { m1: { status: 'taken', takenAt: 492, method: 'voice' }, m2: { status: 'upcoming' }, m3: { status: 'upcoming' } },
+    events: [{ id: 'e1', medId: 'm1', at: 480, text: 'Reminder sent' }, { id: 'e2', medId: 'm1', at: 492, text: 'Self-reported by voice' }],
+    notes: [
+      { id: 'n1', type: 'info', title: 'Amlodipine 5 mg confirmed', body: 'Logged by voice at 8:12 AM.', at: 492, read: false, ack: false, medId: 'm1' },
+      { id: 'n2', type: 'info', title: 'Weekly summary is ready', body: 'See how last week went in Analytics.', at: 420, read: true, ack: true, link: 'analytics' }
+    ],
+    alerts: [], reminders: [],
+    settings: { largeText: false, reduceMotion: false, spoken: true, voiceSpeed: 'Normal', repeat: 10, pushRem: true, cgAlerts: true, summary: false, contact: 'Call first', threshold: 30 },
+    seq: 20
+  };
+}
+const TRANSIENT = () => ({ stack: [{ s: 'home' }], sheet: null, dialog: null, toast: null, voice: { phase: 'idle' }, voiceInput: '', form: null, formErr: {}, verify: { phase: 'ready', outcome: 'match', progress: 0 }, medFilter: 'All', noteFilter: 'All', range: 7, call: null, outcomeSel: null, outcomeNote: '', outcomeErr: '', deferTime: '', deferErr: '', ringReady: false });
+
+class Component extends DCLogic {
+  scrollRef = React.createRef();
+  state = Object.assign(this.load(), TRANSIENT());
+
+  load() { try { const raw = localStorage.getItem(KEY); if (raw) { const d = JSON.parse(raw); if (d && d.meds) return Object.assign(initialData(), d); } } catch (e) {} return initialData(); }
+  componentDidMount() {
+    this.rt = setTimeout(() => this.setState({ ringReady: true }), 250);
+    this.onKey = e => { if (e.key === 'Escape') { if (this.state.dialog) this.setState({ dialog: null }); else if (this.state.sheet) this.closeSheet(); } };
+    window.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { clearTimeout(this.rt); clearTimeout(this.tt); clearInterval(this.vi); clearInterval(this.ci); clearTimeout(this.cr); window.removeEventListener('keydown', this.onKey); try { this.rec && this.rec.abort(); } catch (e) {} }
+  componentDidUpdate(_, p) {
+    const s = this.state;
+    if (['clock', 'meds', 'doses', 'events', 'notes', 'alerts', 'reminders', 'settings'].some(k => s[k] !== p[k])) {
+      const d = {}; ['clock', 'meds', 'doses', 'events', 'notes', 'alerts', 'reminders', 'settings', 'seq'].forEach(k => d[k] = s[k]);
+      try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {}
+    }
+  }
+
+  toast(msg) { clearTimeout(this.tt); this.setState({ toast: msg }); this.tt = setTimeout(() => this.setState({ toast: null }), 2800); }
+  top() { requestAnimationFrame(() => { const el = this.scrollRef.current; if (el) el.scrollTop = 0; }); }
+  push(r) { this.setState(s => ({ stack: [...s.stack, r], sheet: null })); this.top(); }
+  tab(x) { this.setState({ stack: [{ s: x }], sheet: null }); this.top(); }
+  back() { this.setState(s => ({ stack: s.stack.length > 1 ? s.stack.slice(0, -1) : [{ s: 'home' }] })); this.top(); }
+  closeSheet() { clearInterval(this.ci); clearTimeout(this.cr); try { this.rec && this.rec.abort(); } catch (e) {} this.setState({ sheet: null, call: null }); }
+  ask(d) { this.setState({ dialog: d }); }
+  eff(m, d) { return d && d.deferredTo != null ? d.deferredTo : m.time; }
+  mut(fn, cb) {
+    this.setState(s => { const st = { ...s, doses: { ...s.doses }, events: [...s.events], notes: [...s.notes], alerts: s.alerts.map(a => ({ ...a, log: [...a.log] })), reminders: [...s.reminders], meds: [...s.meds] }; fn(st); st.events.sort((a, b) => a.at - b.at); return st; }, cb);
+  }
+  nid(st, p) { st.seq = (st.seq || 0) + 1; return p + st.seq; }
+  ev(st, medId, text, at) { st.events.push({ id: this.nid(st, 'e'), medId, at: at == null ? st.clock : at, text }); }
+  note(st, n) { st.notes.unshift({ id: this.nid(st, 'n'), read: false, ack: false, at: st.clock, ...n }); }
+  medOf(st, id) { return st.meds.find(m => m.id === id); }
+
+  runClock(st, to) {
+    st.clock = Math.min(to, 1439);
+    const thr = st.settings.threshold;
+    st.reminders = st.reminders.map(r => { if (!r.fired && st.clock >= r.at) { this.note(st, { type: 'info', title: 'Voice reminder', body: r.text, at: r.at }); return { ...r, fired: true }; } return r; });
+    st.meds.forEach(m => {
+      const d0 = st.doses[m.id]; if (!d0) return; const d = { ...d0 }; const t = this.eff(m, d);
+      if (d.status === 'upcoming' && st.clock >= t) { d.status = 'due'; this.ev(st, m.id, 'Reminder sent', t); if (st.settings.pushRem) this.note(st, { type: 'warning', title: `Time for ${m.name} ${m.dose}`, body: `${m.qty} · ${m.instr}. Please confirm once taken.`, at: t, medId: m.id }); }
+      if ((d.status === 'due' || d.status === 'unverified') && !d.alertId && st.clock >= t + thr) {
+        if (st.settings.cgAlerts) this.escalate(st, m, d, t + thr, `No confirmation ${thr} min after the reminder`);
+        else if (d.status !== 'unverified') { d.status = 'unverified'; this.ev(st, m.id, 'Not confirmed in time (caregiver alerts off)', t + thr); }
+      }
+      st.doses[m.id] = d;
+    });
+  }
+  escalate(st, m, d, at, reason) {
+    d.status = 'unverified'; const id = this.nid(st, 'a'); d.alertId = id; const t = this.eff(m, d);
+    st.alerts.unshift({ id, medId: m.id, doseTime: t, createdAt: at, stage: 'escalated', log: [{ at: t, text: 'Reminder sent to Margaret' }, { at, text: reason + '. Daniel alerted (simulated).' }] });
+    this.ev(st, m.id, 'Caregiver alerted', at);
+    this.note(st, { type: 'critical', title: `Caregiver alert: ${m.name} unverified`, body: `${m.name} ${m.dose} (due ${fmt(t)}) hasn't been confirmed. Daniel Lee was notified in this demo; no real message was sent.`, at, medId: m.id, alertId: id });
+    st.doses[m.id] = d;
+  }
+  advance(n) { this.mut(st => this.runClock(st, st.clock + n)); this.toast('Demo clock: ' + fmt(Math.min(this.state.clock + n, 1439))); }
+  nextT(s) { let b = null; s.meds.forEach(m => { const d = s.doses[m.id]; if (d && d.status === 'upcoming') { const t = this.eff(m, d); if (t > s.clock && (b == null || t < b)) b = t; } }); s.reminders.forEach(r => { if (!r.fired && r.at > s.clock && (b == null || r.at < b)) b = r.at; }); return b; }
+  jumpNext() { const t = this.nextT(this.state); if (t == null) return this.toast('No more reminders today'); this.mut(st => this.runClock(st, t)); this.setState({ sheet: null }); this.toast('Demo clock moved to ' + fmt(t)); }
+  jumpEsc() {
+    const s = this.state, thr = s.settings.threshold; let b = null;
+    s.meds.forEach(m => { const d = s.doses[m.id]; if (!d || d.alertId || !['upcoming', 'due', 'unverified'].includes(d.status)) return; const t = this.eff(m, d) + thr; if (b == null || t < b) b = t; });
+    if (b == null) return this.toast('No unconfirmed doses left to escalate');
+    if (!s.settings.cgAlerts) return this.toast('Caregiver alerts are turned off in Profile');
+    this.mut(st => this.runClock(st, Math.max(b, st.clock)), () => { const a = this.state.alerts.find(x => x.stage !== 'resolved'); this.setState({ sheet: null }); if (a) this.push({ s: 'alert', id: a.id }); });
+    this.toast('Demo clock moved to ' + fmt(Math.max(b, s.clock)));
+  }
+
+  take(medId, method, conf) {
+    this.mut(st => {
+      const m = this.medOf(st, medId); const d = { ...st.doses[medId], status: 'taken', takenAt: st.clock, method }; st.doses[medId] = d;
+      this.ev(st, medId, METHOD[method] + (conf ? ` · ${conf}% demo confidence` : ''));
+      this.note(st, { type: 'info', title: `${m.name} ${m.dose} confirmed`, body: `${METHOD[method]} at ${fmt(st.clock)}.`, medId, read: true, ack: true });
+      const a = st.alerts.find(x => x.id === d.alertId && x.stage !== 'resolved'); if (a) a.log.push({ at: st.clock, text: 'Margaret confirmed the dose (' + METHOD[method].toLowerCase() + ')' });
+    });
+  }
+  undo(medId) { this.mut(st => { const m = this.medOf(st, medId); const d = { ...st.doses[medId] }; const t = this.eff(m, d); d.status = st.clock >= t ? (d.alertId ? 'unverified' : 'due') : 'upcoming'; delete d.takenAt; delete d.method; st.doses[medId] = d; this.ev(st, medId, 'Confirmation undone'); }); this.toast('Confirmation removed'); }
+  deferTo(medId, to) {
+    if (to <= this.state.clock) return this.setState({ deferErr: 'Pick a time later than ' + fmt(this.state.clock) + '.' });
+    this.mut(st => { st.doses[medId] = { ...st.doses[medId], status: 'upcoming', deferredTo: to }; this.ev(st, medId, 'Reminder moved to ' + fmt(to)); });
+    this.setState({ sheet: null, deferErr: '' }); this.toast('We\'ll remind you at ' + fmt(to));
+  }
+
+  startVerify() {
+    clearInterval(this.vi);
+    this.setState(s => ({ verify: { ...s.verify, phase: 'scanning', progress: 0 } }));
+    this.vi = setInterval(() => {
+      const v = this.state.verify; const p = Math.min(100, v.progress + 5);
+      if (p >= 100) { clearInterval(this.vi); this.setState({ verify: { ...v, progress: 100, phase: 'result' } }); this.verifyResult(v.outcome); }
+      else this.setState({ verify: { ...v, progress: p } });
+    }, 90);
+  }
+  verifyResult(o) {
+    const top = this.state.stack[this.state.stack.length - 1]; const id = top.id;
+    if (o === 'match') return;
+    this.mut(st => { const d = st.doses[id]; if (!d || d.status === 'taken') return; st.doses[id] = { ...d, status: ['upcoming', 'due'].includes(d.status) ? 'unverified' : d.status }; this.ev(st, id, o === 'uncertain' ? 'Verification inconclusive (simulated)' : 'Verification: medicine did not match (simulated)'); });
+  }
+  askCaregiver(id) {
+    if (!this.state.settings.cgAlerts) return this.toast('Caregiver alerts are turned off in Profile');
+    this.mut(st => { const m = this.medOf(st, id); const d = { ...st.doses[id] }; if (d.alertId) return; this.escalate(st, m, d, st.clock, 'Verification inconclusive. Margaret asked for a check'); },
+      () => { const d = this.state.doses[id]; if (d && d.alertId) { this.setState(s => ({ stack: [...s.stack.slice(0, -1), { s: 'alert', id: d.alertId }] })); this.top(); } });
+  }
+
+  updAlert(aid, fn) { this.mut(st => { const a = st.alerts.find(x => x.id === aid); if (a) fn(a, st); }); }
+  ackAlert(aid) { this.updAlert(aid, (a, st) => { a.stage = 'acknowledged'; a.ackAt = st.clock; a.log.push({ at: st.clock, text: 'Daniel acknowledged the alert' }); st.notes = st.notes.map(n => n.alertId === aid ? { ...n, read: true, ack: true } : n); }); this.toast('Alert acknowledged'); }
+  startCall() {
+    clearInterval(this.ci); clearTimeout(this.cr);
+    this.setState({ sheet: 'call', call: { phase: 'ringing', secs: 0 } });
+    this.cr = setTimeout(() => { this.setState({ call: { phase: 'connected', secs: 0 } }); this.ci = setInterval(() => this.setState(s => s.call ? { call: { ...s.call, secs: s.call.secs + 1 } } : null), 1000); }, 2200);
+  }
+  endCall(aid) {
+    const c = this.state.call || { phase: 'ringing', secs: 0 }; clearInterval(this.ci); clearTimeout(this.cr);
+    this.updAlert(aid, (a, st) => { a.contactAt = st.clock; a.log.push({ at: st.clock, text: c.phase === 'connected' ? `Called Margaret, ${c.secs}s (simulated)` : 'Call not answered (simulated)' }); });
+    this.setState({ call: null, sheet: 'outcome', outcomeSel: null, outcomeNote: '', outcomeErr: '' });
+  }
+  saveOutcome(aid) {
+    const k = this.state.outcomeSel; if (!k) return this.setState({ outcomeErr: 'Choose an outcome to continue.' });
+    const o = OUTCOMES.find(x => x.k === k); const note = this.state.outcomeNote.trim();
+    this.updAlert(aid, (a, st) => { a.log.push({ at: st.clock, text: 'Outcome: ' + o.l + (note ? ` ("${note}")` : '') }); if (k !== 'unreachable') { a.stage = 'outcome'; a.outcome = k; a.note = note; } });
+    this.setState({ sheet: null }); this.toast(k === 'unreachable' ? 'Logged. Try calling again later.' : 'Outcome recorded');
+  }
+  resolveAlert(aid) {
+    this.updAlert(aid, (a, st) => {
+      const m = this.medOf(st, a.medId); const d = st.doses[a.medId];
+      if (d && d.status !== 'taken') { if (a.outcome === 'missed') { st.doses[a.medId] = { ...d, status: 'missed' }; this.ev(st, a.medId, 'Marked missed by caregiver'); } else { st.doses[a.medId] = { ...d, status: 'taken', takenAt: st.clock, method: 'caregiver' }; this.ev(st, a.medId, 'Confirmed by caregiver'); } }
+      a.stage = 'resolved'; a.resolvedAt = st.clock; a.log.push({ at: st.clock, text: 'Alert resolved' });
+      if (m) this.note(st, { type: 'info', title: 'Alert resolved', body: `${m.name} ${m.dose}: ${OUTCOMES.find(x => x.k === a.outcome).l}.`, read: true, ack: true, alertId: aid });
+    });
+    this.toast('Alert resolved');
+  }
+
+  openAdd() { this.setState({ sheet: 'form', formErr: {}, form: { mode: 'add', name: '', dose: '', qty: '1 tablet', instr: 'After breakfast', time: toHM(Math.min(1380, Math.ceil((this.state.clock + 60) / 30) * 30)), rec: 'Daily', color: 'blue', purpose: '' } }); }
+  openEdit(id) { const m = this.state.meds.find(x => x.id === id); if (!m) return; this.setState({ sheet: 'form', formErr: {}, form: { mode: 'edit', id, name: m.name, dose: m.dose, qty: m.qty, instr: m.instr, time: toHM(m.time), rec: m.rec, color: m.color, purpose: m.purpose || '' } }); }
+  saveForm() {
+    const f = this.state.form; const e = {}; const t = fromHM(f.time);
+    if (f.name.trim().length < 2) e.name = 'Enter the medicine name.';
+    if (!/\d/.test(f.dose)) e.dose = 'Include a strength, for example 10 mg.';
+    if (t == null) e.time = 'Choose a reminder time.';
+    if (!e.name && this.state.meds.some(m => m.id !== f.id && m.name.toLowerCase() === f.name.trim().toLowerCase() && m.dose.replace(/\s/g, '') === f.dose.replace(/\s/g, ''))) e.name = 'This medication is already on your list.';
+    if (Object.keys(e).length) return this.setState({ formErr: e });
+    const data = { name: f.name.trim().replace(/^./, c => c.toUpperCase()), dose: f.dose.trim(), qty: f.qty, instr: f.instr, time: t, rec: f.rec, color: f.color, purpose: f.purpose.trim() || 'General' };
+    if (f.mode === 'add') {
+      this.mut(st => { const id = this.nid(st, 'm'); st.meds.push({ id, ...data }); st.doses[id] = { status: t > st.clock ? 'upcoming' : 'later' }; this.ev(st, id, 'Medication added'); });
+      this.toast(data.name + ' added' + (t > this.state.clock ? '' : '. First reminder tomorrow'));
+    } else {
+      this.mut(st => {
+        const i = st.meds.findIndex(m => m.id === f.id); const old = st.meds[i]; st.meds[i] = { ...old, ...data };
+        const d = { ...st.doses[f.id] };
+        if (old.time !== t && !d.alertId && ['upcoming', 'later', 'due'].includes(d.status)) { d.deferredTo = null; d.status = t > st.clock ? 'upcoming' : (d.status === 'due' ? 'due' : 'later'); }
+        st.doses[f.id] = d; this.ev(st, f.id, 'Details updated');
+      });
+      this.toast('Changes saved');
+    }
+    this.setState({ sheet: null });
+  }
+  removeMed(id) {
+    const m = this.state.meds.find(x => x.id === id);
+    this.mut(st => { st.meds = st.meds.filter(x => x.id !== id); delete st.doses[id]; st.alerts = st.alerts.filter(a => a.medId !== id); st.notes = st.notes.filter(n => n.medId !== id || !n.alertId); });
+    this.setState({ sheet: null, stack: [{ s: 'meds' }] }); this.toast((m ? m.name : 'Medication') + ' removed');
+  }
+
+  nextMed() {
+    const s = this.state; const v = s.meds.map(m => ({ m, d: s.doses[m.id] })).filter(x => x.d);
+    const p = v.filter(x => ['due', 'unverified'].includes(x.d.status)).sort((a, b) => this.eff(a.m, a.d) - this.eff(b.m, b.d));
+    if (p.length) return p[0].m;
+    const u = v.filter(x => x.d.status === 'upcoming').sort((a, b) => this.eff(a.m, a.d) - this.eff(b.m, b.d));
+    return u.length ? u[0].m : null;
+  }
+  interpret(text, source) {
+    const t = text.toLowerCase(); const s = this.state; let ip;
+    const nm = this.nextMed();
+    if (/remind|later|snooze/.test(t)) {
+      const meal = (t.match(/breakfast|lunch|dinner|supper/) || [])[0]; const mins = (t.match(/(\d+)\s*(min|minute)/) || [])[1]; const hrs = (t.match(/(\d+)\s*(hour|hr)/) || [])[1];
+      let at = s.clock + 30, note = '';
+      if (mins) at = s.clock + Number(mins); else if (hrs) at = s.clock + 60 * Number(hrs);
+      else if (meal) { const mt = { breakfast: 570, lunch: 780, dinner: 1140, supper: 1140 }[meal]; if (mt > s.clock) at = mt; else note = ` ${meal[0].toUpperCase() + meal.slice(1)} time has passed, so I'll use 30 minutes from now.`; }
+      at = Math.min(at, 1439);
+      const label = 'Check your medication' + (meal ? ' after ' + meal : '');
+      ip = { kind: 'remind', at, label, title: 'Set a reminder for ' + fmt(at), detail: `"${label}"` + note };
+    } else if (/(show|what|next|which)/.test(t)) {
+      ip = nm ? { kind: 'show', id: nm.id, title: `Open ${nm.name} ${nm.dose}`, detail: 'Your next medicine to confirm.' } : { kind: 'none', title: 'No more medicines today', detail: 'Every dose scheduled for today is confirmed.' };
+    } else if (/(taken|took|take|had|done)/.test(t)) {
+      ip = nm ? { kind: 'take', id: nm.id, title: `Mark ${nm.name} ${nm.dose} as taken`, detail: `Scheduled ${fmt(this.eff(nm, s.doses[nm.id]))}. It will be logged as self-reported by voice.` } : { kind: 'none', title: 'Nothing left to confirm', detail: 'All of today\'s doses are already recorded.' };
+    } else ip = { kind: 'unknown', title: "I didn't find a command I can act on", detail: 'Try "I have taken my medicine", "Remind me after lunch" or "Show my next medicine".' };
+    this.setState({ voice: { phase: 'interpreted', text, source, interp: ip }, voiceInput: '' });
+  }
+  runVoice() {
+    const ip = this.state.voice.interp; if (!ip) return;
+    if (ip.kind === 'take') { this.take(ip.id, 'voice'); this.toast('Dose recorded'); this.setState({ sheet: null }); }
+    else if (ip.kind === 'remind') { this.mut(st => { st.reminders.push({ id: this.nid(st, 'r'), at: ip.at, text: ip.label, fired: false }); }); this.toast('Reminder set for ' + fmt(ip.at)); this.setState({ sheet: null }); }
+    else if (ip.kind === 'show') { this.setState({ sheet: null }); this.push({ s: 'detail', id: ip.id }); }
+  }
+  mic() {
+    const v = this.state.voice;
+    if (v.phase === 'listening') { try { this.rec && this.rec.stop(); } catch (e) {} return; }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return this.setState({ voice: { phase: 'unsupported' } });
+    try {
+      const r = new SR(); r.lang = 'en-US'; r.interimResults = true; r.maxAlternatives = 1; this.heard = '';
+      r.onresult = e => { let t = ''; for (let i = 0; i < e.results.length; i++) t += e.results[i][0].transcript; this.heard = t; this.setState(s => ({ voice: { ...s.voice, text: t, source: 'speech' } })); };
+      r.onerror = e => { this.failed = true; this.setState({ voice: { phase: (e.error === 'not-allowed' || e.error === 'service-not-allowed') ? 'denied' : e.error === 'no-speech' ? 'nothing' : 'error' } }); };
+      r.onend = () => { if (this.failed) { this.failed = false; return; } if (this.state.voice.phase !== 'listening') return; if (this.heard.trim()) this.interpret(this.heard.trim(), 'speech'); else this.setState({ voice: { phase: 'nothing' } }); };
+      this.failed = false; this.rec = r; this.setState({ voice: { phase: 'listening' } }); r.start();
+    } catch (e) { this.setState({ voice: { phase: 'error' } }); }
+  }
+
+  vm(m) {
+    const s = this.state; const d = s.doses[m.id] || { status: 'later' }; const t = this.eff(m, d); const st = ST[d.status] || ST.later; const p = PILLS[m.color] || PILLS.blue;
+    const isTaken = d.status === 'taken'; const snoozed = d.status === 'upcoming' && d.deferredTo != null;
+    const long = { taken: 'Taken', upcoming: snoozed ? 'Snoozed to ' + fmt(t) : 'Scheduled for ' + fmt(t), due: 'Awaiting confirmation', unverified: 'Unverified, not yet confirmed', missed: 'Missed (recorded by caregiver)', later: 'Starts tomorrow' }[d.status];
+    const badge = d.status === 'upcoming' ? fmt(t) : st.label;
+    return {
+      id: m.id, exists: true, missing: false, name: m.name, dose: m.dose, title: m.name + ' ' + m.dose, qty: m.qty, instr: m.instr, rec: m.rec, purpose: (m.purpose || 'General').toLowerCase(),
+      sub: m.qty + ' · ' + m.instr, status: d.status, timeRaw: t, time: fmt(t), takenAt: d.takenAt || 0,
+      takenText: isTaken ? (METHOD[d.method] || 'Confirmed') + ' · ' + fmt(d.takenAt) : '', alertId: d.alertId || null,
+      badge, badgeShort: d.status === 'upcoming' ? (snoozed ? 'Snoozed' : 'Upcoming') : st.label, statusLong: long, fg: st.fg, bg: st.bg, isTaken,
+      isAlert: ['due', 'unverified', 'missed'].includes(d.status), isClock: ['upcoming', 'later'].includes(d.status),
+      tile: p.tile, pa: p.a, pb: p.b || p.a, cap: p.cap, round: !p.cap, line: p.line,
+      aria: `${m.name} ${m.dose}, ${m.qty}, ${m.instr}, ${fmt(t)}, ${long}`,
+      open: () => this.push({ s: 'detail', id: m.id })
+    };
+  }
+  stats(range) {
+    const s = this.state; const days = HIST.slice(-(range - 1)).map(h => ({ date: h.date, s: h.s.map((v, k) => ({ id: HID[k], v })) }));
+    const td = s.meds.map(m => { const d = s.doses[m.id]; if (!d) return null; const t = this.eff(m, d); let v = null; if (d.status === 'taken') v = 'taken'; else if (d.status === 'missed') v = 'missed'; else if (d.status === 'unverified' || (d.status === 'due' && s.clock >= t + s.settings.threshold)) v = 'unverified'; return v ? { id: m.id, v } : null; }).filter(Boolean);
+    days.push({ date: DAY0, s: td, today: true });
+    let T = 0, U = 0, M = 0; const per = {};
+    const raw = days.map(d => { let t = 0, u = 0, mi = 0; d.s.forEach(x => { per[x.id] = per[x.id] || { t: 0, u: 0, m: 0 }; if (x.v === 'taken') { t++; per[x.id].t++; } else if (x.v === 'unverified') { u++; per[x.id].u++; } else { mi++; per[x.id].m++; } }); T += t; U += u; M += mi; return { d, t, u, mi }; });
+    const cap = Math.max(3, ...raw.map(r => r.t + r.u + r.mi)); const H = 120;
+    const bars = raw.map((r, i) => {
+      const dt = r.d.date; let label = '';
+      if (range === 7) label = r.d.today ? 'Today' : WD[dt.getDay()];
+      else if (r.d.today || (raw.length - 1 - i) % (range === 14 ? 3 : 7) === 0) label = r.d.today ? 'Today' : String(dt.getDate());
+      return { th: (r.t / cap * H) + 'px', uh: (r.u / cap * H) + 'px', mh: (r.mi / cap * H) + 'px', label, lc: r.d.today ? '#1462D6' : '#647A99', lw: r.d.today ? 700 : 500, title: `${WD[dt.getDay()]} ${dt.getDate()}: ${r.t} taken, ${r.u} unverified, ${r.mi} missed` };
+    });
+    const sched = T + U + M; return { bars, T, U, M, sched, pct: sched ? Math.round(T / sched * 100) : 0, per };
+  }
+  seg(opts, cur, set) { return opts.map(o => { const v = typeof o === 'object' ? o.v : o; const l = typeof o === 'object' ? o.l : String(o); const a = v === cur; return { label: l, active: a, onClick: () => set(v), bg: a ? '#FFFFFF' : 'transparent', fg: a ? '#1462D6' : '#45608A', sh: a ? '0 2px 8px rgba(28,84,160,.14)' : 'none', fw: a ? 700 : 500 }; }); }
+  chips(opts, cur, set) { return opts.map(o => { const a = o.v === cur; return { label: o.l, active: a, onClick: () => set(o.v), bg: a ? '#1877F2' : '#fff', fg: a ? '#fff' : '#2A3B55', border: a ? '#1877F2' : '#D6E2F2' }; }); }
+  setS(k, v) { this.setState(s => ({ settings: { ...s.settings, [k]: v } })); }
+  tg(k, label, sub) { const on = !!this.state.settings[k]; return { label, sub, on, toggle: () => { this.setS(k, !on); }, track: on ? '#1877F2' : '#CBD6E6', knob: on ? '23px' : '3px' }; }
+
+  renderVals() {
+    const s = this.state; const top = s.stack[s.stack.length - 1]; const scr = top.s;
+    const tabOf = { home: 'home', meds: 'meds', analytics: 'analytics', profile: 'profile', detail: 'meds', verify: 'meds', notes: 'home', alert: 'home' };
+    const vms = s.meds.map(m => this.vm(m)).sort((a, b) => a.timeRaw - b.timeRaw);
+    const today = vms.filter(v => v.status !== 'later'); const takenN = today.filter(v => v.isTaken).length;
+    const openAlerts = s.alerts.filter(a => a.stage !== 'resolved');
+    const pend = today.filter(v => v.status === 'due' || v.status === 'unverified');
+    const EMPTY = { exists: false, missing: true, title: '', sub: '', badge: '', tile: '#EEF2F7', pa: '#ccc', pb: '#ccc', cap: false, round: true, open: () => this.tab('meds') };
+    const lastTaken = today.filter(v => v.isTaken).sort((a, b) => b.takenAt - a.takenAt)[0];
+    const featured = pend[0] || lastTaken || today.find(v => v.status === 'upcoming') || vms[0] || EMPTY;
+    const upcoming = today.filter(v => !v.isTaken && v.status !== 'missed');
+    const hasUnread = s.notes.some(n => !n.read);
+
+    let safety;
+    if (openAlerts.length) { const m = s.meds.find(x => x.id === openAlerts[0].medId); safety = { title: 'Action needed', color: '#C2412F', tile: '#FDECE9', glyph: I.bang, text: `Caregiver alerted: ${m ? m.name : 'a dose'} is unverified.` }; }
+    else if (pend.length) safety = { title: 'Pending', color: '#8A5300', tile: '#FFF1D3', glyph: I.bang, text: `${pend.length} dose${pend.length > 1 ? 's' : ''} awaiting confirmation.` };
+    else safety = { title: 'All Good', color: '#138A68', tile: '#E3F5EE', glyph: 'M12 9v6M9 12h6', text: 'No unresolved alerts today.' };
+    safety.aria = 'Safety status: ' + safety.title + '. ' + safety.text;
+    const heroChip = openAlerts.length || pend.length ? { a: 'Check needed', b: pend.length + ' pending', bg: '#E8913A', path: I.bang } : { a: 'On time', b: 'Today', bg: '#1877F2', path: I.check };
+
+    const w = this.stats(7); const prev = HIST.slice(-13, -6); let pt = 0, pn = 0; prev.forEach(h => h.s.forEach(v => { pn++; if (v === 'taken') pt++; })); const prevPct = Math.round(pt / pn * 100); const diff = w.pct - prevPct;
+    const ring = { pct: w.pct + '%', count: `${w.T} of ${w.sched} doses`, offset: String(175.9 * (1 - (s.ringReady ? w.pct / 100 : 0))), trend: (diff >= 0 ? '▲ +' : '▼ −') + Math.abs(diff) + '% vs last week', trendColor: diff >= 0 ? '#138A68' : '#B5362A' };
+    ring.aria = `Adherence this week ${ring.pct}, ${ring.count}, ${ring.trend}. Open analytics.`;
+
+    const mf = s.medFilter; const fmap = { All: () => true, Upcoming: v => ['upcoming', 'due', 'later'].includes(v.status), Taken: v => v.isTaken, Unverified: v => v.status === 'unverified' };
+    const medList = vms.filter(fmap[mf]);
+    const medFilters = this.chips(['All', 'Upcoming', 'Taken', 'Unverified'].map(k => ({ v: k, l: k + ' ' + vms.filter(fmap[k]).length })), mf, v => this.setState({ medFilter: v }));
+
+    let cur = EMPTY;
+    if ((scr === 'detail' || scr === 'verify') || s.sheet === 'defer') {
+      const id = top.id || (s.stack.find(x => x.id) || {}).id; const m = s.meds.find(x => x.id === id);
+      if (m) {
+        const v = this.vm(m); const d = s.doses[m.id] || {}; const a = s.alerts.find(x => x.id === d.alertId);
+        const hist = s.events.filter(e => e.medId === m.id).sort((x, y) => y.at - x.at).map(e => ({ text: e.text, when: 'Today ' + fmt(e.at), dot: /alert|Unverified|not|inconclusive|match/i.test(e.text) ? '#EE8B3A' : /Confirm|Verified|Self|caregiver/i.test(e.text) ? '#1877F2' : '#B9C7DA' }));
+        const k = HID.indexOf(m.id);
+        if (k >= 0) HIST.slice(-5).reverse().forEach(h => { const st = h.s[k]; hist.push({ text: ST[st].label, when: `${WD[h.date.getDay()]} ${h.date.getDate()} Oct`, dot: st === 'taken' ? '#1877F2' : st === 'unverified' ? '#EE8B3A' : '#DC4F40' }); });
+        cur = Object.assign(v, {
+          facts: [{ k: 'Reminder', v: v.time }, { k: 'Amount', v: m.qty }, { k: 'When', v: m.instr }, { k: 'Repeats', v: m.rec }],
+          history: hist, canAct: ['upcoming', 'due', 'unverified'].includes(v.status), noDefer: !!(a && a.stage !== 'resolved'),
+          hasOpenAlert: !!(a && a.stage !== 'resolved'), openAlert: () => a && this.push({ s: 'alert', id: a.id }),
+          edit: () => this.openEdit(m.id), verify: () => { this.setState({ verify: { phase: 'ready', outcome: 'match', progress: 0 } }); this.push({ s: 'verify', id: m.id }); },
+          defer: () => this.setState({ sheet: 'defer', deferTime: '', deferErr: '' }),
+          undo: () => this.ask({ title: 'Undo this confirmation?', body: `${m.name} will go back to not confirmed.`, label: 'Undo', bg: '#1877F2', run: () => this.undo(m.id) }),
+          confirmTake: () => this.ask({ title: `Record ${m.name} ${m.dose} as taken?`, body: `This logs ${m.qty.toLowerCase()} at ${fmt(s.clock)}. Only confirm if you have taken it.`, label: 'Yes, I took it', bg: '#1877F2', run: () => { this.take(m.id, 'manual'); this.toast('Dose recorded'); } })
+        });
+      }
+    }
+
+    const V = s.verify; const vres = { match: { title: 'Matches ' + cur.title, text: 'The demo check matched the expected medicine. Tap below to record the dose.', conf: '94%', fg: '#0F7457', bg: '#EEF9F4', border: '#C9EBDD', icon: I.check }, uncertain: { title: 'Unverified', text: 'The demo check couldn\'t confirm the medicine. The dose has not been marked as taken.', conf: '58%', fg: '#A3420F', bg: '#FFF6EE', border: '#F6D9C2', icon: I.bang }, nomatch: { title: "Doesn't match " + cur.title, text: 'Please check the label before taking anything. Nothing has been recorded as taken.', conf: '21%', fg: '#B5362A', bg: '#FFF4F2', border: '#F6CFC8', icon: 'M6 6l12 12M18 6 6 18' } }[V.outcome];
+    const vf = Object.assign({}, vres, {
+      ready: V.phase === 'ready', scanning: V.phase === 'scanning', result: V.phase === 'result', pct: V.progress + '%',
+      isMatch: V.outcome === 'match', notMatch: V.outcome !== 'match', isUncertain: V.outcome === 'uncertain',
+      opts: this.seg([{ v: 'match', l: 'Match' }, { v: 'uncertain', l: 'Uncertain' }, { v: 'nomatch', l: 'No match' }], V.outcome, v => this.setState(x => ({ verify: { ...x.verify, outcome: v } }))),
+      start: () => this.startVerify(), retry: () => this.setState({ verify: { phase: 'ready', outcome: V.outcome, progress: 0 } }),
+      confirm: () => { this.take(cur.id, 'verified', 94); this.toast('Dose recorded as verified'); this.back(); },
+      manual: () => this.ask({ title: 'Confirm manually?', body: `The check didn't confirm ${cur.title}. Only continue if you are sure you took the right medicine.`, label: 'Confirm', bg: '#1877F2', run: () => { this.take(cur.id, 'manual'); this.toast('Dose recorded'); this.back(); } }),
+      ask: () => this.askCaregiver(cur.id)
+    });
+
+    const an = this.stats(s.range);
+    const per = s.meds.map(m => { const p = an.per[m.id]; if (!p) return { name: m.name + ' ' + m.dose, rate: '0%', detail: 'Not enough data yet', r: 2 }; const n = p.t + p.u + p.m; const r = p.t / n; return { name: m.name + ' ' + m.dose, rate: Math.round(r * 100) + '%', detail: `${p.t} of ${n} confirmed · ${p.u} unverified · ${p.m} missed`, r, instr: m.instr }; });
+    const low = per.filter(p => p.r < 1 && p.r <= 1).sort((a, b) => a.r - b.r)[0];
+    const anNotes = [`${an.T} of ${an.sched} scheduled doses were confirmed in the last ${s.range} days (${an.pct}%).`];
+    if (low && low.r < 1) anNotes.push(`${low.name} (${(low.instr || '').toLowerCase()}) had the most unconfirmed doses in this period.`);
+    anNotes.push('Unverified means no confirmation arrived in time. A dose only counts as missed when a caregiver records it.');
+    const anV = { ...an, pct: an.pct + '%', count: `${an.T} of ${an.sched} doses confirmed`, per, notes: anNotes, gap: s.range === 30 ? '3px' : s.range === 14 ? '5px' : '10px', aria: `Bar chart of daily doses over ${s.range} days: ${an.T} taken, ${an.U} unverified, ${an.M} missed` };
+
+    const nf = s.noteFilter; const nfm = { All: () => true, Reminders: n => n.type !== 'critical', Alerts: n => n.type === 'critical' };
+    const TY = { info: { l: 'Info', fg: '#1462D6', tile: '#E4F0FF', icon: I.bell, icon2: I.bell2, cardBg: '#fff', border: '#E4ECF8' }, warning: { l: 'Reminder', fg: '#855000', tile: '#FFF1D3', icon: I.clock, icon2: I.clock2, cardBg: '#fff', border: '#F3E3C0' }, critical: { l: 'Critical', fg: '#B5362A', tile: '#FDE8E6', icon: I.alert, icon2: I.alert2, cardBg: '#FFF8F7', border: '#F6CFC8' } };
+    const setNote = (id, patch) => this.setState(x => ({ notes: x.notes.map(n => n.id === id ? { ...n, ...patch } : n) }));
+    const noteList = s.notes.filter(nfm[nf]).sort((a, b) => b.at - a.at).map(n => {
+      const ty = TY[n.type]; const a = n.alertId && s.alerts.find(x => x.id === n.alertId); const d = n.medId && s.doses[n.medId];
+      const hasAlert = !!(a && n.type === 'critical'); const hasDose = n.type === 'warning' && d && ['due', 'unverified', 'upcoming'].includes(d.status);
+      return { ...ty, typeLabel: ty.l, title: n.title, body: n.body, time: 'Today ' + fmt(n.at), unread: !n.read, hasAlert, hasDose: !!hasDose, hasLink: n.link === 'analytics',
+        showAck: !n.ack && !hasAlert, acked: n.ack && n.type !== 'info',
+        ack: () => setNote(n.id, { ack: true, read: true }),
+        openAlert: () => { setNote(n.id, { read: true }); this.push({ s: 'alert', id: n.alertId }); },
+        openDose: () => { setNote(n.id, { read: true }); this.push({ s: 'detail', id: n.medId }); },
+        openLink: () => { setNote(n.id, { read: true }); this.tab('analytics'); } };
+    });
+    const sched = s.reminders.filter(r => !r.fired).map(r => ({ text: r.text, time: fmt(r.at), cancel: () => { this.setState(x => ({ reminders: x.reminders.filter(y => y.id !== r.id) })); this.toast('Reminder cancelled'); } }));
+
+    let al = { exists: false, missing: true };
+    if (scr === 'alert' || s.sheet === 'call' || s.sheet === 'outcome') {
+      const a = s.alerts.find(x => x.id === top.id); const m = a && s.meds.find(x => x.id === a.medId);
+      if (a && m) {
+        const d = s.doses[m.id] || {}; const res = a.stage === 'resolved'; const endT = res ? a.resolvedAt : s.clock;
+        const verified = d.status === 'taken';
+        const SG = { escalated: { l: 'Escalated', t: 'Dose unverified', fg: '#B5362A', tile: '#FDE8E6', bg: 'linear-gradient(160deg,#FFFFFF,#FFF4F2)', bd: '#F6CFC8', i: I.alert, i2: I.alert2 }, acknowledged: { l: 'Acknowledged', t: 'Contact Margaret', fg: '#855000', tile: '#FFF1D3', bg: 'linear-gradient(160deg,#FFFFFF,#FFF9EE)', bd: '#F3E3C0', i: I.clock, i2: I.clock2 }, outcome: { l: 'Outcome recorded', t: 'Ready to resolve', fg: '#1462D6', tile: '#E4F0FF', bg: 'linear-gradient(160deg,#FFFFFF,#F1F7FF)', bd: '#D6E6FB', i: I.check, i2: '' }, resolved: { l: 'Resolved', t: 'Case closed', fg: '#0F7457', tile: '#E3F5EE', bg: 'linear-gradient(160deg,#FFFFFF,#F0FAF6)', bd: '#C9EBDD', i: I.check, i2: '' } }[a.stage];
+        const oc = OUTCOMES.find(x => x.k === a.outcome);
+        const stepDone = '#1877F2', stepCur = '#F2A93B', stepTodo = '#E1E8F2';
+        al = {
+          exists: true, missing: false, stageLabel: SG.l, title: SG.t, fg: SG.fg, tile: SG.tile, heroBg: SG.bg, heroBorder: SG.bd, icon: SG.i, icon2: SG.i2,
+          text: res ? `${m.name} ${m.dose} (due ${fmt(a.doseTime)}). ${oc ? oc.l : ''}.` : `Margaret hasn't confirmed ${m.name} ${m.dose}, due ${fmt(a.doseTime)} ${m.instr.toLowerCase()}.` + (verified ? ' She has since confirmed it herself.' : ''),
+          facts: [{ k: res ? 'Time to resolve' : 'Since reminder', v: dur(endT - a.doseTime) }, { k: 'Verification', v: verified ? 'Confirmed' : 'Pending' }, { k: 'Alert threshold', v: dur(a.createdAt - a.doseTime) || 'Manual' }, { k: 'Patient', v: 'Margaret Lee, 74' }],
+          steps: [{ label: 'REMIND', sub: fmt(a.doseTime), bar: stepDone, fg: '#1462D6' }, { label: 'VERIFY', sub: verified ? 'Confirmed' : 'Pending', bar: verified ? stepDone : stepCur, fg: verified ? '#1462D6' : '#855000' }, { label: 'ESCALATE', sub: fmt(a.createdAt), bar: stepDone, fg: '#1462D6' }, { label: 'RESOLVE', sub: res ? fmt(a.resolvedAt) : 'Open', bar: res ? '#138A68' : a.stage === 'escalated' ? stepTodo : stepCur, fg: res ? '#0F7457' : '#647A99' }],
+          isEscalated: a.stage === 'escalated', isAck: a.stage === 'acknowledged', isOutcome: a.stage === 'outcome', isResolved: res,
+          outcomeLabel: oc ? oc.l : '', note: a.note || '',
+          summary: res ? `${oc.l}${a.note ? ` ("${a.note}")` : ''}. Reminder at ${fmt(a.doseTime)}, caregiver alerted at ${fmt(a.createdAt)}${a.ackAt != null ? `, acknowledged at ${fmt(a.ackAt)}` : ''}${a.contactAt != null ? `, contacted at ${fmt(a.contactAt)}` : ''}, resolved at ${fmt(a.resolvedAt)}. Dose status: ${ST[(s.doses[m.id] || {}).status || 'later'].label}.` : '',
+          log: [...a.log].sort((x, y) => y.at - x.at).map(l => ({ when: fmt(l.at), text: l.text })),
+          ack: () => this.ackAlert(a.id), call: () => this.startCall(), record: () => this.setState({ sheet: 'outcome', outcomeSel: a.outcome || null, outcomeNote: a.note || '', outcomeErr: '' }),
+          resolve: () => this.ask({ title: 'Resolve this alert?', body: a.outcome === 'missed' ? `${m.name} will be recorded as missed for today.` : `${m.name} will be recorded as confirmed by caregiver.`, label: 'Resolve', bg: '#138A68', run: () => this.resolveAlert(a.id) }),
+          id: a.id
+        };
+      }
+    }
+
+    const vo = s.voice; const VM = { idle: ['Tap the microphone and speak', '#2A3B55'], listening: ['Listening… tap again to stop', '#1462D6'], unsupported: ["Voice input isn't available in this browser. Type a command below instead.", '#855000'], denied: ['Microphone access was blocked. Allow it in your browser settings, or type below.', '#B5362A'], nothing: ["I didn't hear anything. Try again or type below.", '#855000'], error: ['Voice input stopped unexpectedly. You can type below instead.', '#B5362A'], interpreted: ['Check the action below before confirming', '#2A3B55'] }[vo.phase] || ['', '#2A3B55'];
+    const ip = vo.interp; const canRun = !!(ip && ['take', 'remind', 'show'].includes(ip.kind));
+    const voV = { listening: vo.phase === 'listening', msg: VM[0], msgColor: VM[1], micClick: () => this.mic(), micLabel: vo.phase === 'listening' ? 'Stop listening' : 'Start voice input', micBg: vo.phase === 'listening' ? 'linear-gradient(135deg,#1463D8,#0E4FB3)' : 'linear-gradient(135deg,#3D95FB,#1877F2)',
+      micIcon: vo.phase === 'listening' ? 'M8 8h8v8H8z' : 'M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z', micIcon2: vo.phase === 'listening' ? '' : 'M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21',
+      hasText: !!vo.text, text: vo.text || '', sourceLabel: vo.source === 'speech' ? 'You said' : 'You typed', hasInterp: !!ip, interpHead: canRun ? 'I understood' : 'Not sure', interpTitle: ip ? ip.title : '', interpDetail: ip ? ip.detail : '', interpBorder: canRun ? '#BFD8FA' : '#F3E3C0', canRun,
+      run: () => this.runVoice(), cancel: () => this.setState({ voice: { phase: 'idle' } }) };
+    const submitVoice = () => { const t = s.voiceInput.trim(); if (t) this.interpret(t, 'typed'); };
+
+    const f = s.form || {}; const fe = s.formErr || {}; const ff = k => e => { const val = e.target.value; this.setState(x => ({ form: { ...x.form, [k]: val }, formErr: { ...x.formErr, [k]: '' } })); };
+    const navDefs = [{ k: 'home', l: 'Home', d1: 'M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z', d2: '' }, { k: 'meds', l: 'Medications', d1: 'M10.6 4.4a4.6 4.6 0 0 1 6.5 6.5l-6.2 6.2a4.6 4.6 0 0 1-6.5-6.5z', d2: 'm7.7 7.3 6.5 6.5' }, { k: 'analytics', l: 'Analytics', d1: 'M4.5 20v-6h3v6zM10.5 20V9h3v11zM16.5 20V4h3v16z', d2: '' }, { k: 'profile', l: 'Profile', d1: 'M12 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8z', d2: 'M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6' }];
+    const at = tabOf[scr];
+    const ST2 = s.settings;
+    const sheetLabels = { voice: 'Voice assistant', defer: 'Remind me later', form: f.mode === 'edit' ? 'Edit medication' : 'Add medication', demo: 'Demo controls', call: 'Calling', outcome: 'Record outcome' };
+    const dlg = s.dialog || { title: '', body: '', label: '', bg: '#1877F2' };
+    const c = s.call;
+
+    return {
+      rm: ST2.reduceMotion ? '1' : '0', zoom: ST2.largeText ? '1.12' : '1', scrollRef: this.scrollRef,
+      showDemoChip: this.props.showDemoChip ?? true, showIllo: this.props.showIllustration ?? true,
+      is: { home: scr === 'home', meds: scr === 'meds', detail: scr === 'detail', verify: scr === 'verify', analytics: scr === 'analytics', notes: scr === 'notes', alert: scr === 'alert', profile: scr === 'profile' },
+      greeting: (s.clock < 720 ? 'Good morning' : s.clock < 1020 ? 'Good afternoon' : 'Good evening') + ', Margaret', clockText: fmt(s.clock), dateText: `${WD[DAY0.getDay()]}day, ${DAY0.getDate()} ${MO[DAY0.getMonth()]}`.replace('Monday'.slice(0, 3) + 'day', 'Monday'),
+      hasUnread, noUnread: !hasUnread, bellLabel: hasUnread ? 'Notifications, unread items' : 'Notifications',
+      heroChip, featured, takenText: `${takenN} of ${today.length} taken`, progressW: (today.length ? takenN / today.length * 100 : 0) + '%',
+      upcoming, noUpcoming: upcoming.length === 0, ring, safety,
+      goNotes: () => this.push({ s: 'notes' }), goProfile: () => this.tab('profile'), goMeds: () => this.tab('meds'), goAnalytics: () => this.tab('analytics'), goHome: () => this.tab('home'), back: () => this.back(),
+      openSafety: () => openAlerts.length ? this.push({ s: 'alert', id: openAlerts[0].id }) : this.push({ s: 'notes' }),
+      openVoice: () => this.setState({ sheet: 'voice', voice: { phase: 'idle' }, voiceInput: '' }), openDemo: () => this.setState({ sheet: 'demo' }), openAdd: () => this.openAdd(),
+      medFilters, medList, medEmpty: medList.length === 0, medEmptyTitle: mf === 'Unverified' ? 'No unverified doses' : mf === 'Taken' ? 'Nothing confirmed yet' : 'No doses here', medEmptyText: mf === 'Unverified' ? 'Doses become unverified only when no confirmation arrives in time.' : mf === 'All' ? 'Add a medication to get started.' : 'Try another filter.',
+      cur, vf,
+      rangeOpts: this.seg([{ v: 7, l: '7 days' }, { v: 14, l: '14 days' }, { v: 30, l: '30 days' }], s.range, v => this.setState({ range: v })), an: anV,
+      noteFilters: this.chips([{ v: 'All', l: 'All' }, { v: 'Reminders', l: 'Reminders' }, { v: 'Alerts', l: 'Alerts ' + s.notes.filter(n => n.type === 'critical').length }], nf, v => this.setState({ noteFilter: v })),
+      noteList, noteEmpty: noteList.length === 0, noteEmptyText: nf === 'Alerts' ? 'No caregiver alerts. Alerts appear when a dose stays unconfirmed past the threshold.' : 'New reminders and updates will appear here.',
+      markAllRead: () => this.setState(x => ({ notes: x.notes.map(n => ({ ...n, read: true })) })),
+      sched, hasSched: sched.length > 0, cgLine: ST2.cgAlerts ? `Caregiver: Daniel Lee · alerted after ${ST2.threshold} min` : 'Caregiver alerts are off',
+      al,
+      sections: [
+        { title: 'Accessibility', cg: false, toggles: [this.tg('largeText', 'Larger text', 'Increase text and control size'), this.tg('reduceMotion', 'Reduce motion', 'Turn off animations')], segs: [] },
+        { title: 'Voice & reminders', cg: false, toggles: [this.tg('spoken', 'Spoken reminders', ST2.spoken ? 'Reminders are read aloud' : 'Reminders show on screen only')], segs: [{ label: 'Voice speed', sub: '', opts: this.seg(['Slower', 'Normal', 'Faster'], ST2.voiceSpeed, v => this.setS('voiceSpeed', v)) }, { label: 'Repeat reminder every', sub: 'Until the dose is confirmed', opts: this.seg([{ v: 5, l: '5 min' }, { v: 10, l: '10 min' }, { v: 15, l: '15 min' }], ST2.repeat, v => this.setS('repeat', v)) }] },
+        { title: 'Notifications', cg: false, toggles: [this.tg('pushRem', 'Dose reminders', 'Add a notification at each reminder time'), this.tg('summary', 'Daily summary', 'An evening recap of today\'s doses')], segs: [] },
+        { title: 'Caregiver', cg: true, toggles: [this.tg('cgAlerts', 'Escalate to caregiver', ST2.cgAlerts ? 'Daniel is alerted when a dose stays unconfirmed' : 'Unconfirmed doses stay on this device only')], segs: [{ label: 'Escalate after', sub: 'Time after the reminder before Daniel is alerted', opts: this.seg([{ v: 15, l: '15 min' }, { v: 30, l: '30 min' }, { v: 60, l: '60 min' }], ST2.threshold, v => { this.setS('threshold', v); this.toast('Escalation threshold: ' + v + ' min'); }) }, { label: 'Contact preference', sub: '', opts: this.seg(['Call first', 'Text first'], ST2.contact, v => this.setS('contact', v)) }] }
+      ],
+      confirmReset: () => this.ask({ title: 'Reset the demo?', body: 'All medications, doses, alerts and settings return to the starting demo state.', label: 'Reset', bg: '#D9473A', run: () => { try { localStorage.removeItem(KEY); } catch (e) {} this.setState(Object.assign(initialData(), TRANSIENT(), { ringReady: true })); this.toast('Demo reset'); this.top(); } }),
+      nav: navDefs.map(n => { const a = at === n.k; return { label: n.l, d1: n.d1, d2: n.d2, onClick: () => this.tab(n.k), current: a ? 'page' : undefined, fg: a ? '#1877F2' : '#7186A3', bg: a ? '#EEF5FF' : 'transparent', fill: a && n.k !== 'meds' ? 'rgba(24,119,242,.18)' : 'none', fw: a ? 700 : 500 }; }),
+      toast: s.toast, sheetOpen: !!s.sheet, sheetLabel: sheetLabels[s.sheet] || '', closeSheet: () => this.closeSheet(),
+      sh: { voice: s.sheet === 'voice', defer: s.sheet === 'defer', form: s.sheet === 'form', demo: s.sheet === 'demo', call: s.sheet === 'call', outcome: s.sheet === 'outcome' },
+      vo: voV, voiceInput: s.voiceInput, onVoiceInput: e => this.setState({ voiceInput: e.target.value }), onVoiceKey: e => { if (e.key === 'Enter') submitVoice(); }, submitVoice,
+      suggestions: ['I have taken my medicine', 'Remind me after lunch', 'Show my next medicine'].map(t => ({ label: t, onClick: () => this.interpret(t, 'typed') })),
+      deferOpts: [15, 30, 60].map(n => ({ label: n === 60 ? '1 hour' : n + ' min', onClick: () => this.deferTo(cur.id, Math.min(1439, s.clock + n)) })),
+      deferTime: s.deferTime, onDeferTime: e => this.setState({ deferTime: e.target.value, deferErr: '' }), deferErr: s.deferErr, deferErrB: s.deferErr ? '#E5604F' : '#D6E2F2',
+      saveDeferTime: () => { const t = fromHM(s.deferTime); if (t == null) return this.setState({ deferErr: 'Choose a time first.' }); this.deferTo(cur.id, t); },
+      form: f, fe: { ...fe, nameB: fe.name ? '#E5604F' : '#D6E2F2', doseB: fe.dose ? '#E5604F' : '#D6E2F2', timeB: fe.time ? '#E5604F' : '#D6E2F2' },
+      fName: ff('name'), fDose: ff('dose'), fQty: ff('qty'), fInstr: ff('instr'), fTime: ff('time'), fPurpose: ff('purpose'),
+      qtyOpts: ['1 tablet', '2 tablets', '1 capsule', '½ tablet', '5 ml'], instrOpts: ['Before breakfast', 'After breakfast', 'With lunch', 'After lunch', 'After dinner', 'At bedtime', 'Any time'],
+      recOpts: this.seg(['Daily', 'Weekdays', 'Every other day'], f.rec, v => this.setState(x => ({ form: { ...x.form, rec: v } }))),
+      colorOpts: Object.keys(PILLS).map(k => ({ label: PILLS[k].label, active: f.color === k, tile: PILLS[k].tile, pa: PILLS[k].a, ring: f.color === k ? '#1877F2' : 'transparent', onClick: () => this.setState(x => ({ form: { ...x.form, color: k } })) })),
+      formSave: f.mode === 'edit' ? 'Save changes' : 'Add medication', formIsEdit: f.mode === 'edit', saveForm: () => this.saveForm(),
+      confirmRemove: () => this.ask({ title: `Remove ${f.name}?`, body: 'Its reminders and today\'s dose will be removed. Past history stays in Analytics.', label: 'Remove', bg: '#D9473A', run: () => this.removeMed(f.id) }),
+      adv15: () => this.advance(15), adv60: () => this.advance(60), jumpNext: () => this.jumpNext(), jumpEsc: () => this.jumpEsc(), thrText: ST2.threshold + ' minutes',
+      callRinging: !!(c && c.phase === 'ringing'), callStatus: c ? (c.phase === 'ringing' ? 'Ringing…' : 'Connected · 0:' + String(c.secs).padStart(2, '0')) : '', endCall: () => this.endCall(al.id),
+      outcomeOpts: OUTCOMES.map(o => { const a = s.outcomeSel === o.k; return { label: o.l, active: a, onClick: () => this.setState({ outcomeSel: o.k, outcomeErr: '' }), border: a ? '#1877F2' : '#D6E2F2', bg: a ? '#F1F7FF' : '#fff', dot: a ? '#1877F2' : 'transparent' }; }),
+      outcomeErr: s.outcomeErr, outcomeNote: s.outcomeNote, onOutcomeNote: e => this.setState({ outcomeNote: e.target.value }), saveOutcome: () => this.saveOutcome(al.id),
+      dialogOpen: !!s.dialog, dlg, closeDialog: () => this.setState({ dialog: null }), runDialog: () => { const r = s.dialog && s.dialog.run; this.setState({ dialog: null }); r && r(); }
+    };
+  }
+}
+</script>
+</body>
+</html>
