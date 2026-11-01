@@ -50,7 +50,7 @@ class FloatingNav extends StatelessWidget {
                         constraints: const BoxConstraints(minHeight: 58),
                         decoration: BoxDecoration(color: i == index ? const Color(0xFFEEF5FF) : Colors.transparent, borderRadius: BorderRadius.circular(20)),
                         child: ExcludeSemantics(
-                          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                          child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
                             Icon(i == index ? items[i].iconActive : items[i].icon, size: 24, color: i == index ? Mt.blue : const Color(0xFF7186A3)),
                             const SizedBox(height: 3),
                             Text(items[i].label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: i == index ? FontWeight.w700 : FontWeight.w500, color: i == index ? Mt.blue : const Color(0xFF7186A3))),
