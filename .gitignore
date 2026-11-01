@@ -1,13 +1,76 @@
-temp/
-**/__pycache__/
-**/.venv/
-*.db
+# ---- Secrets & credentials (never commit) ----
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+key.properties
+**/key.properties
+**/upload-keystore*
+**/google-services.json
+**/GoogleService-Info.plist
+service-account*.json
+*-credentials.json
+secrets/
+*.tfvars
+
+# ---- Build outputs & release artifacts ----
+dist/
+*.apk
+*.aab
+*.ipa
+**/build/
+
+# ---- Local scratch / tooling ----
+temp/
+tmp/
+.claude/
+*.log
+*.pid
+nohup.out
+
+# ---- Local databases ----
+*.db
+*.sqlite
+*.sqlite3
+
+# ---- Python (server/) ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
 .pytest_cache/
 .ruff_cache/
-client/build/
-client/.dart_tool/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
 
-client/android/key.properties
-client/android/*.jks
-server/*.db
+# ---- Flutter / Dart / Android (client/) ----
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+.packages
+client/android/local.properties
+client/android/.gradle/
+client/android/captures/
+client/android/app/debug/
+client/android/app/profile/
+client/android/app/release/
+client/.metadata
+**/GeneratedPluginRegistrant.*
+
+# ---- IDE / OS ----
+.idea/
+*.iml
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
